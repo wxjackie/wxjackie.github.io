@@ -3,14 +3,28 @@
         <title>我的全新 Hugo 网站</title>
         <link>http://example.org/</link>
         <description>我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 06 Sep 2021 17:53:16 &#43;0800</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate>
             <atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
         <item>
-    <title>First_post</title>
-    <link>http://example.org/posts/first_post/</link>
-    <pubDate>Mon, 06 Sep 2021 17:53:16 &#43;0800</pubDate>
+    <title>K8s拓扑分布约束实现Redis高可用调度的方案设计</title>
+    <link>http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</link>
+    <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
     <author></author>
-    <guid>http://example.org/posts/first_post/</guid>
-    <description><![CDATA[test aaa test]]></description>
+    <guid>http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</guid>
+    <description><![CDATA[K8s拓扑分布约束实现Redis高可用调度的方案设计 一、背景 Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默]]></description>
+</item><item>
+    <title>基于K8s的Redis云原生实践综述</title>
+    <link>http://example.org/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</link>
+    <pubDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</pubDate>
+    <author></author>
+    <guid>http://example.org/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
+    <description><![CDATA[基于K8s的Redis云原生实践综述 随着云原生时代的到来和Kubernetes（简称K8s）的日渐成熟，越来越多的互联网团队开始将Kuber]]></description>
+</item><item>
+    <title>Redis的一个简单漏洞攻击与防范</title>
+    <link>http://example.org/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/</link>
+    <pubDate>Sat, 16 Nov 2019 12:40:16 &#43;0800</pubDate>
+    <author></author>
+    <guid>http://example.org/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/</guid>
+    <description><![CDATA[Redis的一个简单漏洞攻击与防范 Redis是目前使用最为广泛的缓存中间件，使用起来虽然方便、简洁但如果不加一些安全限制的使用，便会导致一些]]></description>
 </item></channel>
 </rss>

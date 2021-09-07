@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>K8s拓扑分布约束实现Redis高可用调度的方案设计 - 我的全新 Hugo 网站</title><meta name="Description" content=""><meta property="og:title" content="K8s拓扑分布约束实现Redis高可用调度的方案设计" />
+<meta property="og:description" content="K8s拓扑分布约束实现Redis高可用调度的方案设计 一、背景 Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-16T14:40:16+08:00" />
+<meta property="article:modified_time" content="2021-08-16T14:40:16+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="K8s拓扑分布约束实现Redis高可用调度的方案设计"/>
+<meta name="twitter:description" content="K8s拓扑分布约束实现Redis高可用调度的方案设计 一、背景 Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默"/>
+<meta name="application-name" content="我的全新 Hugo 网站">
+<meta name="apple-mobile-web-app-title" content="我的全新 Hugo 网站"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" /><link rel="prev" href="http://example.org/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "K8s拓扑分布约束实现Redis高可用调度的方案设计",
+        "inLanguage": "en-us",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88\/"
+        },"genre": "posts","wordcount":  3946 ,
+        "url": "http:\/\/example.org\/posts\/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88\/","datePublished": "2021-08-16T14:40:16+08:00","dateModified": "2021-08-16T14:40:16+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"description": ""
+    }
+    </script></head>
+    <body header-desktop="" header-mobile=""><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title"></h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">K8s拓扑分布约束实现Redis高可用调度的方案设计</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i></a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-08-16">2021-08-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span></span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#一背景">一、背景</a></li>
+    <li><a href="#二需求调研">二、需求调研</a>
+      <ul>
+        <li><a href="#现有调度能力分析">现有调度能力分析</a></li>
+        <li><a href="#pod拓扑分布约束能力分析">Pod拓扑分布约束能力分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#三设计">三、设计</a>
+      <ul>
+        <li><a href="#调度配置设计">调度配置设计</a></li>
+        <li><a href="#调度推演">调度推演</a></li>
+      </ul>
+    </li>
+    <li><a href="#四功能验证">四、功能验证</a></li>
+    <li><a href="#五结论">五、结论</a></li>
+    <li><a href="#六补充参考">六、补充参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="k8s拓扑分布约束实现redis高可用调度的方案设计">K8s拓扑分布约束实现Redis高可用调度的方案设计</h1>
+<h2 id="一背景">一、背景</h2>
+<p>Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默认的调度器无法满足需求，因此我们部门K8s团队先前自行开发了PaaS扩展调度器以支持一些中间件的高可用部署需求。</p>
+<p>但是在我们的产品商业化过程中，部分客户环境不允许对K8s底层调度做改动，并且在实际部署中，PaaS扩展调度器的部署没有很好的观测性，容易遗漏这个依赖项。</p>
+<p>在<code>K8s1.19</code>版本后，<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/" target="_blank" rel="noopener noreffer">Pod拓扑分布约束（Topology Spread Constraints）</a>已经成为稳定特性，因此需要调研是否能够剥离对扩展调度器的依赖，使用该原生特性设计调度策略来代替。</p>
+<h2 id="二需求调研">二、需求调研</h2>
+<p>首先需要明确Redis Cluster目前的高可用调度有哪些限制和语义，并分析是否能够通过拓扑分布约束特性配置达到相同语义的效果。需要提前说明的是，在我们的设计中，Redis分片用<code>StatefulSet</code>（简写为<code>Sts</code>）组织，一组主从属于同一<code>Sts</code>，一个Redis Cluster由多个<code>Sts</code>组成。</p>
+<h3 id="现有调度能力分析">现有调度能力分析</h3>
+<p>目前Redis Cluster的调度要求如下</p>
+<p>单AZ（可用域，Available Zone）调度要求：</p>
+<ul>
+<li>Redis集群同一分片的主从Pod不能同时存在于同一个<strong>Node节点</strong></li>
+<li>单个Node节点部署同一个集群的实例Pod数必须少于<strong>1/3</strong></li>
+</ul>
+<p>双AZ调度要求：</p>
+<ul>
+<li>Redis集群同一分片的主从Pod不能同时存在于同一个<strong>可用域</strong></li>
+<li>双AZ均分部署同一Redis集群的所有实例Pod</li>
+<li>在满足上述前提下，单个AZ内尽可能分散部署实例Pod到不同的Node节点</li>
+</ul>
+<p>三AZ及多AZ调度要求：</p>
+<ul>
+<li>Redis集群同一分片的主从Pod不能同时存在于同一个<strong>可用域</strong></li>
+<li>单个AZ部署同一Redis集群的实例Pod数必须少于集群Pod总数的<strong>1/2</strong></li>
+<li>在满足上述前提下，应避免不同机房部署同一Redis集群的Pod数量出现极端差异（特殊权重调度除外）</li>
+</ul>
+<p>接下来分析上述调度要求目前分别是如何实现的：</p>
+<ul>
+<li>
+<p>主从Pod不能存在于同一Node节点或可用域：Operator在创建StatefulSet时，设置<strong>Pod强制反亲和</strong>实现，如果是单AZ，反亲和性的<code>TopologyKey</code>的值为<code>kubernetes.io/hostname</code>，多AZ时该值为<code>failure-domain.beta.kubernetes.io/zone</code></p>
+</li>
+<li>
+<p>单个Node节点、单个AZ部署Redis集群Pod数上限、必须调度的AZ：<strong>PaaS扩展调度器</strong>提供的语义实现，在Operator创建Redis集群时创建的调度Configmap中直接填写，例如</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">cluster-size</span><span class="p">:</span><span class="w"> </span><span class="m">18</span><span class="w">    </span><span class="l">// redis集群pod总数</span><span class="w">
+</span><span class="w"></span><span class="nt">max-pod-on-node</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">  </span><span class="l">// 单个Node上该Redis集群Pod数上限</span><span class="w">
+</span><span class="w"></span><span class="nt">max-pod-in-zone</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">  </span><span class="l">// 单个AZ内该Redis集群Pod数上限</span><span class="w">
+</span><span class="w"></span><span class="nt">available-zones</span><span class="p">:</span><span class="w"> </span><span class="l">cn-east-1a,cn-east-1b,cn-east-1c // 必须调度的AZ</span><span class="w">
+</span></code></pre></div></li>
+</ul>
+<h3 id="pod拓扑分布约束能力分析">Pod拓扑分布约束能力分析</h3>
+<p>根据官方文档介绍，拓扑分布约束可以用来控制Pods在集群内故障域之间的分布，比如区域、节点和用户自定义的拓扑域等。该特性的核心字段是<code>maxSkew</code>，可以暂时理解为<strong>最大偏差值</strong>，实际意义根据<code>WhenUnsatisfiable</code>的取值不同而有差异：</p>
+<ul>
+<li>当 <code>whenUnsatisfiable</code> 等于 &ldquo;DoNotSchedule&rdquo; 时，<code>maxSkew</code> 是目标拓扑域中匹配的Pod数与全局最小值之间可存在的差异，即强制要求拓扑域之间Pod数的差不能超过<code>maxSkew</code>。</li>
+<li>当 <code>whenUnsatisfiable</code> 等于 &ldquo;ScheduleAnyway&rdquo; 时，调度器会更为偏向能够降低偏差值的拓扑域，即软性限制，即使两个拓扑域之间的Pod数的差超过<code>maxSkew</code>仍可以调度，只是调度会倾向于降低拓扑域间的偏差。</li>
+</ul>
+<p>因此我们可以根据Redis集群Pod总数和AZ信息，根据该特性设置Pod在Node节点或AZ的分布均匀程度，实现原本由扩展调度器语义提供的相同功能。</p>
+<h2 id="三设计">三、设计</h2>
+<h3 id="调度配置设计">调度配置设计</h3>
+<p>下面介绍对于原有扩展调度器功能的替代方案，初始化创建Redis集群的配置逻辑如下</p>
+<ul>
+<li>
+<p>单个Node节点、单个AZ部署Redis集群Pod数上限：同一Redis集群Node节点维度</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
+</span><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l">Pod总数/3 // 如果Pod总数能够被3整除，则再减1</span><span class="w">
+</span><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedulegit </span><span class="w">
+</span></code></pre></div><p>同理，如果是多AZ环境在保留上述Node偏差值约束的条件下，再加一条</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l">Pod总数/2 // 如果Pod总数能够被2整除，则再减1</span><span class="w">
+</span><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
+</span></code></pre></div></li>
+<li>
+<p>必须调度的AZ：直接配置Pod的节点亲和性实现，在多AZ环境下，由于有AZ间<code>maxSkew</code>的约束，不会出现有某个AZ调度不到的问题。</p>
+</li>
+<li>
+<p>Redis集群同一分片的主从Pod不能同时位于同一Node或Zone：保持现有方案，仍然采用设置同一<code>StatefulSet</code>内Pod强制反亲和实现。</p>
+</li>
+<li>
+<p>除了上述硬性约束外，同集群Node维度再额外添加偏好约束，使Pod分布在Node尽可能的均匀。（如果是多AZ再加上Zone维度）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
+</span><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">ScheduleAnyway</span><span class="w">
+</span></code></pre></div></li>
+</ul>
+<p>水平扩缩容时，分片数变化，Pod总数也会改变，因此水平扩缩容的配置逻辑为：</p>
+<ul>
+<li>在检查到集群声明的分片数与Sts个数不同时，则重新计算限制规则，并更新到所有<code>Sts</code>中</li>
+<li>如果是水平扩容（新增Sts），则新创建出的Pod已经按照新的集群大小配置<code>maxSkew</code>，存量的Pod配置不变，但所属的Sts配置已改变，能够保证重建、垂直升级功能的正常运行。</li>
+</ul>
+<h3 id="调度推演">调度推演</h3>
+<p>接下来推演典型的三分片Redis Cluster使用该方案的调度流程，假设环境为3个AZ，每个AZ两个Node，调度推演流程如图所示（生成的Pod中的调度配置较长，放在文档尾部<strong>补充参考1</strong>中）：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/pod-topo/pod-schedule1.jpg"
+        data-srcset="/img/pod-topo/pod-schedule1.jpg, /img/pod-topo/pod-schedule1.jpg 1.5x, /img/pod-topo/pod-schedule1.jpg 2x"
+        data-sizes="auto"
+        alt="/img/pod-topo/pod-schedule1.jpg"
+        title="new-pod-schedule1" /></p>
+<p>Redis Operator创建出<code>StatefulSet</code>后，默认每个<code>Sts</code>副本数为2，前缀相同的<code>Pod</code>属于同一<code>Sts</code>，如<code>Pod0-0和Pod0-1</code>。每个<code>Sts</code>的<code>0号Pod</code>会先被调度，下面对每一步做具体的分析：</p>
+<ol>
+<li>首先3个<code>Sts</code>的0号Pod会最先被调度，由于均匀分布策略，可以假定<code>Pod0-0、Pod1-0、Pod2-0</code>分别调度到<code>Node1、Node4、Node6</code>上，如上图。</li>
+<li>接下来推演每个Sts的第二个Pod的调度逻辑，由于AZ维度的<code>maxSkew = 6/2 -1 = 2</code>，Node维度的<code>maxSkew = 6/3 - 1 = 1</code>，<code>Pod0-1</code>可能调度到除<code>Node1</code>和<code>Node2</code>之外任何一个节点（调度到<code>Node1</code>则Node维度的最大偏差值为2，大于<code>maxSkew</code>，所以不可能调度到<code>Node1</code>），这里先假设调度到<code>ZoneB</code>的<code>Node3</code>。</li>
+<li><code>Pod1-1</code>只能被调度到<code>Node2</code>和<code>Node5</code>（因强制反亲和不能调度到Zone2，调度到已有Pod的其他Zone的Node回使得Node维度最大偏差值超过限制）假定调度到Node5。同理分析可知，此时<code>Pod2-1</code>只能调度到<code>Node2</code>（根据现有要求，这里可能存在调度死锁问题，在文档尾部<strong>补充参考2</strong>中描述。）</li>
+</ol>
+<p>单AZ的场景更为简单，只要Node数量足够（&gt;= 6）即可完成调度，不再画图推演。</p>
+<h2 id="四功能验证">四、功能验证</h2>
+<p>测试环境为Kind搭建的<code>K8s1.19</code>集群，1个master，6个node均分到3个AZ，针对不同AZ数做基础的场景验证。</p>
+<p>单AZ</p>
+<ul>
+<li>3分片集群创建、水平扩容到5分片、垂直升级、重建：正常</li>
+<li>6分片集群创建、水平扩容到10分片，再缩回5分片、垂直升级、重建：正常</li>
+</ul>
+<p>双AZ（暂不支持垂直升级）</p>
+<ul>
+<li>3分片集群创建、水平扩容到5分片、重建：正常</li>
+<li>6分片集群创建、水平扩容到10分片，再缩回5分片、重建：正常</li>
+</ul>
+<p>三AZ</p>
+<ul>
+<li>3分片集群创建、水平扩容到5分片、垂直升级、重建：正常</li>
+<li>6分片集群创建、水平扩容到10分片，再缩回5分片、垂直升级、重建：正常</li>
+</ul>
+<h2 id="五结论">五、结论</h2>
+<p>使用Pod拓扑分布约束功能，基本可以代替初版扩展调度器提供的能力，建议后期使用，以剥离对扩展调度器的依赖，其他中间件也可以使用此特性实现Pod在Node、Zone或其他自定义拓扑域均匀分布的效果。但是此方案也会引入一些需要考虑和优化的问题。</p>
+<ul>
+<li>在现有调度约束下，三分片Redis集群使用该机制可能存在调度死锁问题，需要评估是否可以放宽些限制，针对<strong>3分片集群</strong>这一特例把先前的<strong>小于1/3和1/2</strong>改为<strong>不大于</strong>。（参考文档末尾的<strong>补充参考</strong>部分）</li>
+<li>存在一些极端场景可能出现不满足我们先前的&quot;1/3&quot;和&quot;1/2&quot;Pod总数约束的情况，比如单个Node上最少Pod数大于0，缩容等，因此需要考虑对于调度分布添加检查和事件报警。</li>
+<li>现有调度要求必须要有最少6个Node可调度，否则无法调度成功；使用Pod拓扑分布约束的方案，Node少于6个也可以调度成功，但Node数少于6个时无法保证<code>maxPodOnNode &lt; 1/3</code>的要求。</li>
+</ul>
+<h2 id="六补充参考">六、补充参考</h2>
+<ol>
+<li>
+<p>推演调度场景中生成的Pod调度配置</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">affinity</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">nodeAffinity</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">nodeSelectorTerms</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span>- <span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span><span class="w">            </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">In</span><span class="w">
+</span><span class="w">            </span><span class="nt">values</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span>- <span class="l">zoneA</span><span class="w">
+</span><span class="w">            </span>- <span class="l">zoneB</span><span class="w">
+</span><span class="w">            </span>- <span class="l">zoneC</span><span class="w">
+</span><span class="w">    </span><span class="nt">podAntiAffinity</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span><span class="nt">cloud.netease.com.ncr/ncrnode</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379-2</span><span class="w">
+</span><span class="w">            </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
+</span><span class="w">            </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
+</span><span class="w">            </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
+</span><span class="w">        </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span><span class="w">  </span><span class="nt">topologySpreadConstraints</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
+</span><span class="w">        </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
+</span><span class="w">        </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
+</span><span class="w">    </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">    </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
+</span><span class="w">    </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
+</span><span class="w">        </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
+</span><span class="w">        </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
+</span><span class="w">    </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">    </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span><span class="w">    </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
+</span></code></pre></div></li>
+<li>
+<p>模拟调度死锁：假设<code>Pod0-1</code>调度到了<code>Node3</code>后，<code>Pod1-1</code>调度到了<code>Node-2</code>，这时<code>Pod2-1</code>将无法调度，因为根据同<code>Sts</code>内Zone维度的强制反亲和，它不能与<code>Pod2-0</code>调度到相同的Zone，即无法调度到<code>Node5</code>；根据同集群Node节点维度<code>maxSkew = 1</code>，它无法调度到除<code>Node5</code>外其他节点，如图所示：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/pod-topo/pod-schedule2.jpg"
+        data-srcset="/img/pod-topo/pod-schedule2.jpg, /img/pod-topo/pod-schedule2.jpg 1.5x, /img/pod-topo/pod-schedule2.jpg 2x"
+        data-sizes="auto"
+        alt="/img/pod-topo/pod-schedule2.jpg"
+        title="new-pod-schedule2" /></p>
+<p>这种情况现有逻辑根据现有要求无法避免，需要评估是否可以放宽些限制，即将“单个Node上Pod数少于总数1/3”和“单个Zone内的Pod数少于总数1/2”的“少于”都改为“不超过”，即可避免调度死锁，<strong>目前评估只有多AZ、3分片时需要放松限制，即将同集群Node维度的计算结果<code>maxSkew = 1 </code>改为2</strong></p>
+</li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();"></a></span>&nbsp;|&nbsp;<span><a href="/"></a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" class="prev" rel="prev" title="基于K8s的Redis云原生实践综述"><i class="fas fa-angle-left fa-fw"></i>基于K8s的Redis云原生实践综述</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"","maxShownLines":10},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
