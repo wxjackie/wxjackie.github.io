@@ -3,5 +3,19 @@
         <title>Categories - category - 我的全新 Hugo 网站</title>
         <link>http://example.org/categories/</link>
         <description>Categories - category - 我的全新 Hugo 网站</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /></channel>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>K8s</title>
+    <link>http://example.org/categories/k8s/</link>
+    <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
+    <author></author>
+    <guid>http://example.org/categories/k8s/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>中间件</title>
+    <link>http://example.org/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/</link>
+    <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
+    <author></author>
+    <guid>http://example.org/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/</guid>
+    <description><![CDATA[]]></description>
+</item></channel>
 </rss>
