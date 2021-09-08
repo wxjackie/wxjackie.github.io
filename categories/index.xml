@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Categories - category - 我的全新 Hugo 网站</title>
+        <title>Categories - category - XJin&#39;s Blog</title>
         <link>http://example.org/categories/</link>
-        <description>Categories - category - 我的全新 Hugo 网站</description>
+        <description>Categories - category - XJin&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
     <title>K8s</title>
     <link>http://example.org/categories/k8s/</link>

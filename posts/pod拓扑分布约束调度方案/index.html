@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>K8s拓扑分布约束实现Redis高可用调度的方案设计 - 我的全新 Hugo 网站</title><meta name="Description" content=""><meta property="og:title" content="K8s拓扑分布约束实现Redis高可用调度的方案设计" />
-<meta property="og:description" content="K8s拓扑分布约束实现Redis高可用调度的方案设计 一、背景 Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默" />
+        <title>K8s拓扑分布约束实现Redis高可用调度的方案设计 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="K8s拓扑分布约束实现Redis高可用调度的方案设计" />
+<meta property="og:description" content="Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默认的调度器无法满足需求，因此我们部门K8s团队先前自行开发了" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-08-16T14:40:16+08:00" />
@@ -14,9 +14,9 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="K8s拓扑分布约束实现Redis高可用调度的方案设计"/>
-<meta name="twitter:description" content="K8s拓扑分布约束实现Redis高可用调度的方案设计 一、背景 Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默"/>
-<meta name="application-name" content="我的全新 Hugo 网站">
-<meta name="apple-mobile-web-app-title" content="我的全新 Hugo 网站"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="twitter:description" content="Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默认的调度器无法满足需求，因此我们部门K8s团队先前自行开发了"/>
+<meta name="application-name" content="XJin&#39;s Blog">
+<meta name="apple-mobile-web-app-title" content="XJin&#39;s Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" /><link rel="prev" href="http://example.org/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/example.org\/posts\/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88\/"
-        },"genre": "posts","keywords": "K8s, Redis, 高可用","wordcount":  3946 ,
+        },"genre": "posts","keywords": "K8s, Redis, 高可用","wordcount":  3916 ,
         "url": "http:\/\/example.org\/posts\/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88\/","datePublished": "2021-08-16T14:40:16+08:00","dateModified": "2021-08-16T14:40:16+08:00","publisher": {
             "@type": "Organization",
             "name": ""},"description": ""
@@ -38,7 +38,7 @@
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+            <a href="/" title="XJin&#39;s Blog">XJin&#39;s Blog</a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="">
@@ -51,7 +51,7 @@
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="我的全新 Hugo 网站">我的全新 Hugo 网站</a>
+                <a href="/" title="XJin&#39;s Blog">XJin&#39;s Blog</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -83,30 +83,29 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#一背景">一、背景</a></li>
-    <li><a href="#二需求调研">二、需求调研</a>
+    <li><a href="#一需求调研">一、需求调研</a>
       <ul>
         <li><a href="#现有调度能力分析">现有调度能力分析</a></li>
         <li><a href="#pod拓扑分布约束能力分析">Pod拓扑分布约束能力分析</a></li>
       </ul>
     </li>
-    <li><a href="#三设计">三、设计</a>
+    <li><a href="#二设计">二、设计</a>
       <ul>
         <li><a href="#调度配置设计">调度配置设计</a></li>
         <li><a href="#调度推演">调度推演</a></li>
       </ul>
     </li>
-    <li><a href="#四功能验证">四、功能验证</a></li>
-    <li><a href="#五结论">五、结论</a></li>
-    <li><a href="#六补充参考">六、补充参考</a></li>
+    <li><a href="#三功能验证">三、功能验证</a></li>
+    <li><a href="#四结论">四、结论</a></li>
+    <li><a href="#五补充参考">五、补充参考</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h1 id="k8s拓扑分布约束实现redis高可用调度的方案设计">K8s拓扑分布约束实现Redis高可用调度的方案设计</h1>
-<h2 id="一背景">一、背景</h2>
+            </div><div class="content" id="content"><blockquote>
 <p>Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默认的调度器无法满足需求，因此我们部门K8s团队先前自行开发了PaaS扩展调度器以支持一些中间件的高可用部署需求。</p>
 <p>但是在我们的产品商业化过程中，部分客户环境不允许对K8s底层调度做改动，并且在实际部署中，PaaS扩展调度器的部署没有很好的观测性，容易遗漏这个依赖项。</p>
 <p>在<code>K8s1.19</code>版本后，<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/" target="_blank" rel="noopener noreffer">Pod拓扑分布约束（Topology Spread Constraints）</a>已经成为稳定特性，因此需要调研是否能够剥离对扩展调度器的依赖，使用该原生特性设计调度策略来代替。</p>
-<h2 id="二需求调研">二、需求调研</h2>
+</blockquote>
+<h2 id="一需求调研">一、需求调研</h2>
 <p>首先需要明确Redis Cluster目前的高可用调度有哪些限制和语义，并分析是否能够通过拓扑分布约束特性配置达到相同语义的效果。需要提前说明的是，在我们的设计中，Redis分片用<code>StatefulSet</code>（简写为<code>Sts</code>）组织，一组主从属于同一<code>Sts</code>，一个Redis Cluster由多个<code>Sts</code>组成。</p>
 <h3 id="现有调度能力分析">现有调度能力分析</h3>
 <p>目前Redis Cluster的调度要求如下</p>
@@ -147,7 +146,7 @@
 <li>当 <code>whenUnsatisfiable</code> 等于 &ldquo;ScheduleAnyway&rdquo; 时，调度器会更为偏向能够降低偏差值的拓扑域，即软性限制，即使两个拓扑域之间的Pod数的差超过<code>maxSkew</code>仍可以调度，只是调度会倾向于降低拓扑域间的偏差。</li>
 </ul>
 <p>因此我们可以根据Redis集群Pod总数和AZ信息，根据该特性设置Pod在Node节点或AZ的分布均匀程度，实现原本由扩展调度器语义提供的相同功能。</p>
-<h2 id="三设计">三、设计</h2>
+<h2 id="二设计">二、设计</h2>
 <h3 id="调度配置设计">调度配置设计</h3>
 <p>下面介绍对于原有扩展调度器功能的替代方案，初始化创建Redis集群的配置逻辑如下</p>
 <ul>
@@ -196,7 +195,7 @@
 <li><code>Pod1-1</code>只能被调度到<code>Node2</code>和<code>Node5</code>（因强制反亲和不能调度到Zone2，调度到已有Pod的其他Zone的Node回使得Node维度最大偏差值超过限制）假定调度到Node5。同理分析可知，此时<code>Pod2-1</code>只能调度到<code>Node2</code>（根据现有要求，这里可能存在调度死锁问题，在文档尾部<strong>补充参考2</strong>中描述。）</li>
 </ol>
 <p>单AZ的场景更为简单，只要Node数量足够（&gt;= 6）即可完成调度，不再画图推演。</p>
-<h2 id="四功能验证">四、功能验证</h2>
+<h2 id="三功能验证">三、功能验证</h2>
 <p>测试环境为Kind搭建的<code>K8s1.19</code>集群，1个master，6个node均分到3个AZ，针对不同AZ数做基础的场景验证。</p>
 <p>单AZ</p>
 <ul>
@@ -213,14 +212,14 @@
 <li>3分片集群创建、水平扩容到5分片、垂直升级、重建：正常</li>
 <li>6分片集群创建、水平扩容到10分片，再缩回5分片、垂直升级、重建：正常</li>
 </ul>
-<h2 id="五结论">五、结论</h2>
+<h2 id="四结论">四、结论</h2>
 <p>使用Pod拓扑分布约束功能，基本可以代替初版扩展调度器提供的能力，建议后期使用，以剥离对扩展调度器的依赖，其他中间件也可以使用此特性实现Pod在Node、Zone或其他自定义拓扑域均匀分布的效果。但是此方案也会引入一些需要考虑和优化的问题。</p>
 <ul>
 <li>在现有调度约束下，三分片Redis集群使用该机制可能存在调度死锁问题，需要评估是否可以放宽些限制，针对<strong>3分片集群</strong>这一特例把先前的<strong>小于1/3和1/2</strong>改为<strong>不大于</strong>。（参考文档末尾的<strong>补充参考</strong>部分）</li>
 <li>存在一些极端场景可能出现不满足我们先前的&quot;1/3&quot;和&quot;1/2&quot;Pod总数约束的情况，比如单个Node上最少Pod数大于0，缩容等，因此需要考虑对于调度分布添加检查和事件报警。</li>
 <li>现有调度要求必须要有最少6个Node可调度，否则无法调度成功；使用Pod拓扑分布约束的方案，Node少于6个也可以调度成功，但Node数少于6个时无法保证<code>maxPodOnNode &lt; 1/3</code>的要求。</li>
 </ul>
-<h2 id="六补充参考">六、补充参考</h2>
+<h2 id="五补充参考">五、补充参考</h2>
 <ol>
 <li>
 <p>推演调度场景中生成的Pod调度配置</p>
