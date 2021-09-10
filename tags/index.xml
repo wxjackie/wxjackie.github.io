@@ -1,41 +1,41 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Tags - tag - XJin&#39;s Blog</title>
+        <title>Tags - Tag - XJin&#39;s Blog</title>
         <link>http://example.org/tags/</link>
-        <description>Tags - tag - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/" rel="self" type="application/rss+xml" /><item>
+        <description>Tags - Tag - XJin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/" rel="self" type="application/rss+xml" /><item>
     <title>K8s</title>
     <link>http://example.org/tags/k8s/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/tags/k8s/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Redis</title>
     <link>http://example.org/tags/redis/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/tags/redis/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>高可用</title>
     <link>http://example.org/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>云原生</title>
     <link>http://example.org/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
     <pubDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>安全</title>
     <link>http://example.org/tags/%E5%AE%89%E5%85%A8/</link>
     <pubDate>Sat, 16 Nov 2019 12:40:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/tags/%E5%AE%89%E5%85%A8/</guid>
     <description><![CDATA[]]></description>
 </item></channel>

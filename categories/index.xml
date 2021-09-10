@@ -1,20 +1,20 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Categories - category - XJin&#39;s Blog</title>
+        <title>Categories - Category - XJin&#39;s Blog</title>
         <link>http://example.org/categories/</link>
-        <description>Categories - category - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
+        <description>Categories - Category - XJin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
     <title>K8s</title>
     <link>http://example.org/categories/k8s/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/categories/k8s/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>中间件</title>
     <link>http://example.org/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/</guid>
     <description><![CDATA[]]></description>
 </item></channel>

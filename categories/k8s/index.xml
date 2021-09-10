@@ -1,20 +1,20 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>K8s - category - XJin&#39;s Blog</title>
+        <title>K8s - Category - XJin&#39;s Blog</title>
         <link>http://example.org/categories/k8s/</link>
-        <description>K8s - category - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/k8s/" rel="self" type="application/rss+xml" /><item>
+        <description>K8s - Category - XJin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/k8s/" rel="self" type="application/rss+xml" /><item>
     <title>K8s拓扑分布约束实现Redis高可用调度的方案设计</title>
     <link>http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</guid>
     <description><![CDATA[Redis Cluster在K8s上部署时，对于Pod的调度有一些特殊的高可用调度需求，默认的调度器无法满足需求，因此我们部门K8s团队先前自行开发了]]></description>
 </item><item>
     <title>基于K8s的Redis云原生实践综述</title>
     <link>http://example.org/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</link>
     <pubDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</pubDate>
-    <author></author>
+    <author>Author</author>
     <guid>http://example.org/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
     <description><![CDATA[随着云原生时代的到来和Kubernetes（简称K8s）的日渐成熟，越来越多的互联网团队开始将Kubernetes作为新的重要基础设施，一些]]></description>
 </item></channel>
