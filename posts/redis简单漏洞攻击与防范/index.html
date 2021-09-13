@@ -6,7 +6,7 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>Redis的一个简单漏洞攻击与防范 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="Redis的一个简单漏洞攻击与防范" />
-<meta property="og:description" content="Redis是目前使用最为广泛的缓存中间件，使用起来虽然方便、简洁但如果不加一些安全限制的使用，便会导致一些问题。之前我的一位朋友，因为在自己" />
+<meta property="og:description" content="介绍Redis的一个简单的漏洞攻击流程以及对应的防范方法。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://xjin.wang/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-11-16T12:40:16+08:00" />
@@ -14,7 +14,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Redis的一个简单漏洞攻击与防范"/>
-<meta name="twitter:description" content="Redis是目前使用最为广泛的缓存中间件，使用起来虽然方便、简洁但如果不加一些安全限制的使用，便会导致一些问题。之前我的一位朋友，因为在自己"/>
+<meta name="twitter:description" content="介绍Redis的一个简单的漏洞攻击流程以及对应的防范方法。"/>
 <meta name="application-name" content="XJin Blog">
 <meta name="apple-mobile-web-app-title" content="XJin Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="panda.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://xjin.wang/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/" /><link rel="next" href="http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {

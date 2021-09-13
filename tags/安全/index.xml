@@ -9,6 +9,6 @@
     <pubDate>Sat, 16 Nov 2019 12:40:16 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://xjin.wang/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/</guid>
-    <description><![CDATA[Redis是目前使用最为广泛的缓存中间件，使用起来虽然方便、简洁但如果不加一些安全限制的使用，便会导致一些问题。之前我的一位朋友，因为在自己]]></description>
+    <description><![CDATA[介绍Redis的一个简单的漏洞攻击流程以及对应的防范方法。]]></description>
 </item></channel>
 </rss>

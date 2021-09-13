@@ -9,6 +9,6 @@
     <pubDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
-    <description><![CDATA[随着云原生时代的到来和Kubernetes（简称K8s）的日渐成熟，越来越多的互联网团队开始将Kubernetes作为新的重要基础设施，一些]]></description>
+    <description><![CDATA[介绍网易轻舟中间件基于Operator的Redis容器化实践，阐述为何Operator是“有状态应用容器化”的一个优雅的解决方案。]]></description>
 </item></channel>
 </rss>
