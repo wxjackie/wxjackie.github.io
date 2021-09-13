@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>云原生 - Tag - XJin&#39;s Blog</title>
-        <link>https://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
+        <link>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
         <description>云原生 - Tag - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</lastBuildDate><atom:link href="https://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="self" type="application/rss+xml" /><item>
     <title>基于K8s的Redis云原生实践综述</title>
-    <link>https://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</link>
+    <link>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</link>
     <pubDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>https://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
+    <guid>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
     <description><![CDATA[随着云原生时代的到来和Kubernetes（简称K8s）的日渐成熟，越来越多的互联网团队开始将Kubernetes作为新的重要基础设施，一些]]></description>
 </item></channel>
 </rss>
