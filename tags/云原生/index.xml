@@ -3,10 +3,10 @@
         <title>云原生 - Tag - XJin&#39;s Blog</title>
         <link>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
         <description>云原生 - Tag - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 04 Feb 2021 17:53:16 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="self" type="application/rss+xml" /><item>
     <title>基于K8s的Redis云原生实践综述</title>
     <link>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</link>
-    <pubDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</pubDate>
+    <pubDate>Thu, 04 Feb 2021 17:53:16 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
     <description><![CDATA[介绍网易轻舟中间件基于Operator的Redis容器化实践，阐述为何Operator是“有状态应用容器化”的一个优雅的解决方案。]]></description>
