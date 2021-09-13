@@ -1,42 +1,42 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Tags - Tag - XJin&#39;s Blog</title>
-        <link>http://xjin.wang/tags/</link>
+        <link>https://xjin.wang/tags/</link>
         <description>Tags - Tag - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</lastBuildDate><atom:link href="https://xjin.wang/tags/" rel="self" type="application/rss+xml" /><item>
     <title>K8s</title>
-    <link>http://xjin.wang/tags/k8s/</link>
+    <link>https://xjin.wang/tags/k8s/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://xjin.wang/tags/k8s/</guid>
+    <guid>https://xjin.wang/tags/k8s/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Redis</title>
-    <link>http://xjin.wang/tags/redis/</link>
+    <link>https://xjin.wang/tags/redis/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://xjin.wang/tags/redis/</guid>
+    <guid>https://xjin.wang/tags/redis/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>高可用</title>
-    <link>http://xjin.wang/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</link>
+    <link>https://xjin.wang/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</link>
     <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://xjin.wang/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</guid>
+    <guid>https://xjin.wang/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>云原生</title>
-    <link>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
+    <link>https://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
     <pubDate>Wed, 27 Jan 2021 17:53:16 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</guid>
+    <guid>https://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>安全</title>
-    <link>http://xjin.wang/tags/%E5%AE%89%E5%85%A8/</link>
+    <link>https://xjin.wang/tags/%E5%AE%89%E5%85%A8/</link>
     <pubDate>Sat, 16 Nov 2019 12:40:16 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://xjin.wang/tags/%E5%AE%89%E5%85%A8/</guid>
+    <guid>https://xjin.wang/tags/%E5%AE%89%E5%85%A8/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

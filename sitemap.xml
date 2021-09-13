@@ -2,17 +2,17 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>http://xjin.wang/categories/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/k8s/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/categories/k8s/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/posts/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/redis/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</loc><lastmod>2021-01-27T17:53:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</loc><lastmod>2021-01-27T17:53:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/</loc><lastmod>2019-11-16T12:40:16&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/%E5%AE%89%E5%85%A8/</loc><lastmod>2019-11-16T12:40:16&#43;08:00</lastmod></url></urlset>
+            <loc>https://xjin.wang/categories/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/tags/k8s/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/categories/k8s/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/posts/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/tags/redis/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/tags/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</loc><lastmod>2021-01-27T17:53:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</loc><lastmod>2021-01-27T17:53:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/</loc><lastmod>2019-11-16T12:40:16&#43;08:00</lastmod></url><url>
+            <loc>https://xjin.wang/tags/%E5%AE%89%E5%85%A8/</loc><lastmod>2019-11-16T12:40:16&#43;08:00</lastmod></url></urlset>
