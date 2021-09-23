@@ -18,6 +18,13 @@
     <guid>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
     <description><![CDATA[介绍网易轻舟中间件基于Operator的Redis容器化实践，阐述为何Operator是“有状态应用容器化”的一个优雅的解决方案。]]></description>
 </item><item>
+    <title>使用Kind快速模拟多节点K8s环境</title>
+    <link>http://xjin.wang/posts/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s/</link>
+    <pubDate>Thu, 21 Jan 2021 16:24:10 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/posts/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s/</guid>
+    <description><![CDATA[在很多开发自测的场景中，我们需要一个干净且可折腾的K8s环境，比如要给节点打污点、开启K8s特性开关、做一些调度功能验证等,本文将介绍使用Kind快速搭建K8s多节点测试环境的方法。]]></description>
+</item><item>
     <title>Redis的一个简单漏洞攻击与防范</title>
     <link>http://xjin.wang/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/</link>
     <pubDate>Sat, 16 Nov 2019 12:40:16 &#43;0800</pubDate>

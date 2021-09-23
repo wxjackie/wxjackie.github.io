@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>使用Kind快速模拟多节点K8s环境 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="使用Kind快速模拟多节点K8s环境" />
+<meta property="og:description" content="在很多开发自测的场景中，我们需要一个干净且可折腾的K8s环境，比如要给节点打污点、开启K8s特性开关、做一些调度功能验证等,本文将介绍使用Kind快速搭建K8s多节点测试环境的方法。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://xjin.wang/posts/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s/" /><meta property="og:image" content="http://xjin.wang/app-touch-icon.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-01-21T16:24:10+08:00" />
+<meta property="article:modified_time" content="2021-01-21T16:24:10+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://xjin.wang/app-touch-icon.png"/>
+
+<meta name="twitter:title" content="使用Kind快速模拟多节点K8s环境"/>
+<meta name="twitter:description" content="在很多开发自测的场景中，我们需要一个干净且可折腾的K8s环境，比如要给节点打污点、开启K8s特性开关、做一些调度功能验证等,本文将介绍使用Kind快速搭建K8s多节点测试环境的方法。"/>
+<meta name="application-name" content="XJin Blog">
+<meta name="apple-mobile-web-app-title" content="XJin Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/panda.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://xjin.wang/posts/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s/" /><link rel="prev" href="http://xjin.wang/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/" /><link rel="next" href="http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "使用Kind快速模拟多节点K8s环境",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/xjin.wang\/posts\/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s\/"
+        },"genre": "posts","keywords": "K8s","wordcount":  1438 ,
+        "url": "http:\/\/xjin.wang\/posts\/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s\/","datePublished": "2021-01-21T16:24:10+08:00","dateModified": "2021-01-21T16:24:10+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Author"},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">使用Kind快速模拟多节点K8s环境</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/k8s/"><i class="far fa-folder fa-fw"></i>K8s</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-21">2021-01-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1438 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;3 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#kind简介">Kind简介</a></li>
+    <li><a href="#kind工作原理">Kind工作原理</a></li>
+    <li><a href="#kind安装与基本使用">Kind安装与基本使用</a></li>
+    <li><a href="#模拟k8s多节点环境">模拟K8s多节点环境</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>在很多开发自测的场景中，我们需要一个干净且可折腾的K8s环境，比如要给节点打污点、开启K8s特性开关、做一些调度功能验证等。但搭建真实的K8s多节点环境耗费资源且繁琐，因此社区推出了一些工具帮助我们搭建K8s测试环境，比如Minikube、Kind等。经过实际使用，Kind是最快的支持模拟K8s多节点环境的部署工具，本文将介绍使用Kind快速搭建K8s多节点测试环境的方法。</p>
+</blockquote>
+<h2 id="kind简介">Kind简介</h2>
+<p>Kind是&quot;Kubernetes in Docker&quot;的简写，即使用Docker容器运行本地K8s集群的工具，它将K8s所需要的所有组件，全部部署在一个 <code>Docker</code> 容器中，可以非常方便快速地搭建K8s集群。与Minikube等传统工具相比，Kind最大的优势就是它极简的依赖项：只依赖于Docker。</p>
+<p>Kind可以支持：</p>
+<ul>
+<li>快速创建单个或多个K8s集群</li>
+<li>支持离线部署多节点K8s集群</li>
+<li>支持部署高可用的K8s集群</li>
+</ul>
+<h2 id="kind工作原理">Kind工作原理</h2>
+<p>Kind 使用容器来模拟每一个K8s节点，并在容器里面运行 <code>Systemd</code>。 容器里的 <code>Systemd</code> 托管了 <code>Kubelet</code> 和 <code>Containerd</code>，然后容器内部的 <code>Kubelet</code> 把其它K8s组件：<code>Kube-Apiserver</code>、<code>Etcd</code>、<code>CNI</code> 等等组件运行起来。</p>
+<p>Kind内部使用了 <code>Kubeadm</code> 这个工具来做集群的部署，包括高可用集群也是借助 <code>Kubeadm</code> 提供的特性来完成的。在高用集群下还会额外部署了一个 Nginx 来提供负载均衡 VIP。</p>
+<h2 id="kind安装与基本使用">Kind安装与基本使用</h2>
+<p>这里默认本机环境已经安装好了Docker，安装Docker的安装文档可直接参考官方文档：https://docs.docker.com/get-docker/</p>
+<p>如果要通过命令行与K8s进行交互，需要安装<code>kubectl</code>，安装方法可参考：https://kubernetes.io/docs/tasks/tools/#install-kubectl</p>
+<p>下面介绍在Linux环境下通过Kind二进制文件的安装方式，首先下载二进制并移动到PATH路径中</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+chmod +x ./kind
+mv ./kind /some-dir-in-your-PATH/kind
+</code></pre></div><p>最简单的搭建命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ kind create cluster
+Creating cluster <span class="s2">&#34;kind&#34;</span> ...
+ ✓ Ensuring node image <span class="o">(</span>kindest/node:v1.19.1<span class="o">)</span> 🖼
+ ✓ Preparing nodes 📦
+ ✓ Creating kubeadm config 📜
+ ✓ Starting control-plane 🕹️
+Cluster creation complete. You can now use the cluster with:
+
+<span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>kind get kubeconfig-path --name<span class="o">=</span><span class="s2">&#34;kind&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
+kubectl cluster-info
+</code></pre></div><p>默认创建出来的K8s集群名为<code>kind</code>，安装完成后的末尾会提示修改<code>KUBECONFIG</code>环境变量，指定<code>kubectl</code>访问该Kind K8s集群。</p>
+<p>如果创建了多个K8s集群，可以使用<code>kubectl cluster-info --context</code>进行交互指定。</p>
+<p>我个人使用Kind的理由是因为它能最快地模拟一个K8s多节点环境，下面介绍模拟多节点的Kind使用方法。</p>
+<h2 id="模拟k8s多节点环境">模拟K8s多节点环境</h2>
+<p>我个人使用Kind的理由是因为它能最快地模拟一个K8s多节点环境，下面介绍模拟多节点的Kind使用方法。</p>
+<p>默认安装的集群只部署了一个控制节点，如果需要部署多节点集群，我们可以通过配置文件的方式来创建多个容器来模拟多个节点。使用Kind命令创建集群的时候，支持通过 <code>--config</code> 参数传递配置文件给 <code>Kind</code>，配置文件可修改的内容主要有 role 和 节点使用的镜像。例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># a cluster with 3 control-plane nodes and 3 workers</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Cluster</span><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">kind.x-k8s.io/v1alpha4</span><span class="w">
+</span><span class="w"></span><span class="nt">featureGates</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">FeatureGateName</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w"></span><span class="nt">nodes</span><span class="p">:</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span><span class="w">	</span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
+</span></code></pre></div><p>然后使用上述配置文件创建Kind集群</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind create cluster --config kind-cluster.yaml
+</code></pre></div><p>创建完成后，使用<code>kubectl get no</code>就可以看到多节点K8s集群了。</p>
+<p>实际使用时我们要需要把本地的Docker镜像导入到模拟的K8s集群中，命令如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind load docker-image my-custom-image-0 my-custom-image-1
+</code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-01-21</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/k8s/">K8s</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/redis%E7%AE%80%E5%8D%95%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E8%8C%83/" class="prev" rel="prev" title="Redis的一个简单漏洞攻击与防范"><i class="fas fa-angle-left fa-fw"></i>Redis的一个简单漏洞攻击与防范</a>
+            <a href="/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" class="next" rel="next" title="基于K8s的Redis云原生实践综述">基于K8s的Redis云原生实践综述<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
