@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s\/"
-        },"genre": "posts","keywords": "K8s","wordcount":  1438 ,
+        },"genre": "posts","keywords": "K8s","wordcount":  1515 ,
         "url": "http:\/\/xjin.wang\/posts\/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s\/","datePublished": "2021-01-21T16:24:10+08:00","dateModified": "2021-01-21T16:24:10+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -77,8 +77,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">使用Kind快速模拟多节点K8s环境</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/k8s/"><i class="far fa-folder fa-fw"></i>K8s</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-21">2021-01-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1438 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;3 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-21">2021-01-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1515 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -96,7 +96,7 @@
 <p>在很多开发自测的场景中，我们需要一个干净且可折腾的K8s环境，比如要给节点打污点、开启K8s特性开关、做一些调度功能验证等。但搭建真实的K8s多节点环境耗费资源且繁琐，因此社区推出了一些工具帮助我们搭建K8s测试环境，比如Minikube、Kind等。经过实际使用，Kind是最快的支持模拟K8s多节点环境的部署工具，本文将介绍使用Kind快速搭建K8s多节点测试环境的方法。</p>
 </blockquote>
 <h2 id="kind简介">Kind简介</h2>
-<p>Kind是&quot;Kubernetes in Docker&quot;的简写，即使用Docker容器运行本地K8s集群的工具，它将K8s所需要的所有组件，全部部署在一个 <code>Docker</code> 容器中，可以非常方便快速地搭建K8s集群。与Minikube等传统工具相比，Kind最大的优势就是它极简的依赖项：只依赖于Docker。</p>
+<p>Kind是&quot;Kubernetes in Docker&quot;的简写，即使用Docker容器运行本地K8s集群的工具，它将K8s所需要的所有组件，全部部署在一个 <code>Docker</code> 容器中，可以非常方便快速地搭建K8s集群。与Minikube等传统工具相比，Kind最大的优势就是它极简的依赖项：只依赖于Docker。在很多开发自测的场景中，我们需要一个干净且可折腾的K8s环境，比如要给节点打污点、开启K8s特性开关、测试指定K8s版本的特性支持、做一些调度功能验证等。</p>
 <p>Kind可以支持：</p>
 <ul>
 <li>快速创建单个或多个K8s集群</li>
