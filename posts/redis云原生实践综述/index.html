@@ -180,7 +180,7 @@
 <p>K8s的自动化哲学有两个核心概念：<strong>声明式API和控制器（controller）模式</strong>。比如我们声明一个三副本的Deployment提交给API Server，K8s中负责Deployment的controller就会监视（Watch）它的变化，发现该Deployment的Pod数为零，对其进行调谐（Reconcile），创建三个Pod，使它达到我们所声明的状态。</p>
 <p>这引发了我们的思考：是否可以将Redis视作像Deployment一样的资源对象进行声明式的管理，同样拥有一个controller对它进行调谐呢？</p>
 <p>这是一个合理且强烈的需求，即资源对象和controller都是由我们自定义，由我们自行编写资源的生命周期和拓扑关系的管理。于是Operator应运而生，可以将其简单的理解为：</p>
-<pre><code>Operator = CRD（Custom Resources Definition）+ Custom Controller
+<pre tabindex="0"><code>Operator = CRD（Custom Resources Definition）+ Custom Controller
 </code></pre><p>如今Operator在社区中已经非常火热，但我们在最初设计做调研时，发现社区的Redis Operator实现上虽简洁，但运维能力和我们作为云计算服务商所强调的风险掌控、兜底能力不足，于是我们NCR（Netease Cloud Redis）团队借鉴社区的经验开发了自己的Redis Operator，下面针对Redis Cluster模式的管理进行解读，总体架构如下图所示：</p>
 <p><img
         class="lazyload"
@@ -291,7 +291,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

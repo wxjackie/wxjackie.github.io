@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>K8s Admission Webhook深入实践 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="K8s Admission Webhook深入实践" />
+<meta property="og:description" content="在一个管理容器化资源的平台开发过程中，我们有时会发现这种需求：一个资源对象在发生创建、更新、删除的API请求时，我们需要做一些附加的操作，比" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://xjin.wang/posts/k8s-webhook/" /><meta property="og:image" content="http://xjin.wang/app-touch-icon.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-11-12T10:42:03+08:00" />
+<meta property="article:modified_time" content="2021-11-12T10:42:03+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://xjin.wang/app-touch-icon.png"/>
+
+<meta name="twitter:title" content="K8s Admission Webhook深入实践"/>
+<meta name="twitter:description" content="在一个管理容器化资源的平台开发过程中，我们有时会发现这种需求：一个资源对象在发生创建、更新、删除的API请求时，我们需要做一些附加的操作，比"/>
+<meta name="application-name" content="XJin Blog">
+<meta name="apple-mobile-web-app-title" content="XJin Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/panda.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://xjin.wang/posts/k8s-webhook/" /><link rel="prev" href="http://xjin.wang/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "K8s Admission Webhook深入实践",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/xjin.wang\/posts\/k8s-webhook\/"
+        },"genre": "posts","wordcount":  2505 ,
+        "url": "http:\/\/xjin.wang\/posts\/k8s-webhook\/","datePublished": "2021-11-12T10:42:03+08:00","dateModified": "2021-11-12T10:42:03+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Author"},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">K8s Admission Webhook深入实践</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-11-12">2021-11-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2505 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#准入控制器介绍">准入控制器介绍</a></li>
+    <li><a href="#webhook使用原理">Webhook使用原理</a></li>
+    <li><a href="#简单实践示例">简单实践示例</a></li>
+    <li><a href="#kubebuilder构建webhook">kubebuilder构建Webhook</a>
+      <ul>
+        <li><a href="#初始化crd和controller">初始化CRD和Controller</a></li>
+        <li><a href="#生成并编写webhook">生成并编写Webhook</a></li>
+      </ul>
+    </li>
+    <li><a href="#实践中的用途">实践中的用途</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>在一个管理容器化资源的平台开发过程中，我们有时会发现这种需求：一个资源对象在发生创建、更新、删除的API请求时，我们需要做一些附加的操作，比如给一个资源对象加Label，调整规格等；资源对象创建或删除时，要做一定的校验，对创建或删除的动作做一定的限制。</p>
+<p>这就引出了K8s的一个功能，Admission Webhook，顾名思义，它是一种捕获特定请求并对其进行处理的回调机制，可以实现对K8s API Server的请求进行拦截和预处理的功能。</p>
+</blockquote>
+<h2 id="准入控制器介绍">准入控制器介绍</h2>
+<p>根据官方文档的描述，准入控制器是一段代码。它会在请求通过认证和授权后，对象被持久化之前拦截到达API Server的请求。K8s默认有多个准入控制器，并且被编译进<code>kube-apiserver</code>二进制文件。执行命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kube-apiserver -h <span class="p">|</span> grep enable-admission-plugins
+</code></pre></div><p>就可以看到，当前K8s集群默认启动的准入控制器插件有哪些。可以从官方文档了解各个准入控制器的作用：<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#what-does-each-admission-controller-do" target="_blank" rel="noopener noreffer">What does each admission controller do?</a></p>
+<p>其中有两个特殊的、拥有极高的灵活性的控制器，也是我们本文主要关注的：<code>MutatingAdmissionWebhook</code>和<code>ValidatingAdmissionWebhook</code>，通常来说，它们分别负责<strong>执行插入变更和校验</strong>的工作。K8s的动态准入控制，目前主要也是指这两种<code>Webhook</code>，还有一种<code>Initializer</code>的机制，目前存在较长的时间未更新，暂不介绍。</p>
+<p>Mutating webhook可以在资源对象请求时，通过创建补丁来修改对象；Validating webhook可以对请求进行校验和拒绝，但无法修改请求中的资源对象。</p>
+<h2 id="webhook使用原理">Webhook使用原理</h2>
+<p>首先借用一张Webhook在K8s API请求声明周期中的流程图：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/k8s-webhook-intro/admission-controller-phases.png"
+        data-srcset="/img/k8s-webhook-intro/admission-controller-phases.png, /img/k8s-webhook-intro/admission-controller-phases.png 1.5x, /img/k8s-webhook-intro/admission-controller-phases.png 2x"
+        data-sizes="auto"
+        alt="/img/k8s-webhook-intro/admission-controller-phases.png"
+        title="/img/k8s-webhook-intro/admission-controller-phases.png" /></p>
+<p>大致的作用流程如下：</p>
+<ol>
+<li>编写处理Webhook回调的Server，最常见的形式是一个HTTP服务，可以通过<code>service</code>进行暴露。</li>
+<li>确认集群开启了Admission controller，创建<code>MutatingWebhookConfiguration</code>和<code>ValidatingWebhookConfiguration</code>来配置Webhook作用的资源对象和回调的服务。</li>
+</ol>
+<h2 id="简单实践示例">简单实践示例</h2>
+<p>首先要确认K8s集群启用了<code>MutatingAdmissionWebhook</code>和<code>ValidatingAdmissionWebhook</code>，以及根据K8s的版本选择对应的GroupVersion：</p>
+<ul>
+<li>K8s v1.16+：<code>admissionregistration.k8s.io/v1</code></li>
+<li>K8s v1.9：<code>admissionregistration.k8s.io/v1beta1</code></li>
+</ul>
+<p><a href="https://blog.hdls.me/15564491070483.html" target="_blank" rel="noopener noreffer">https://blog.hdls.me/15564491070483.html</a></p>
+<p><a href="https://cloudnative.to/blog/mutating-admission-webhook/" target="_blank" rel="noopener noreffer">https://cloudnative.to/blog/mutating-admission-webhook/</a></p>
+<h2 id="kubebuilder构建webhook">kubebuilder构建Webhook</h2>
+<p><a href="https://blog.hdls.me/15708754600835.html" target="_blank" rel="noopener noreffer">https://blog.hdls.me/15708754600835.html</a></p>
+<p>通常我们使用<code>kubebuilder</code>作为Operator的脚手架，它可以帮助我们方便的构建CRD和Controller的代码。同时，它也可以帮助我们在Operator中使用Admission webhooks。Kubebuilder帮助我们简化了在Operator中使用Webhook的操作流程， 我们仅仅需要编写<code>Defaulter</code>和<code>Validator</code>的逻辑即可。</p>
+<p>Kubebuilder 会帮你处理其余无关业务逻辑的部分，比如下面这些：</p>
+<ol>
+<li>创建 Webhook 服务端。</li>
+<li>确保服务端已添加到 manager 中。</li>
+<li>为这些 Webhooks 创建处理函数。</li>
+<li>用路径在你的服务端中注册每个处理函数。</li>
+</ol>
+<p>下面假定一个自定义资源类型<code>App</code>，使用<code>kubebuilder</code>初始化一个Operator框架，并部署Webhook。</p>
+<h3 id="初始化crd和controller">初始化CRD和Controller</h3>
+<p>执行命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ go mod init xjin.com/demo-operator
+$ <span class="c1"># 初始化Operator项目框架</span>
+$ kubebuilder init --domain xjin.com --owner <span class="s2">&#34;xjin&#34;</span>
+$ <span class="c1"># 创建API、Controller代码</span>
+$ kubebuilder create api --group xjin --version v1 --kind App
+$ <span class="c1"># 生成CRD、RBAC等资源yaml</span>
+$ make manifest
+</code></pre></div><p>然后将生成的CRD、RBAC等资源，apply到目标K8s集群上。</p>
+<h3 id="生成并编写webhook">生成并编写Webhook</h3>
+<p>执行命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ kubebuilder create webhook --group xjin --version v1 --kind App --defaulting --programmatic-validation<span class="se">\
+</span><span class="se"></span>$ make manifests
+</code></pre></div><p>分别生成了Webhook的代码和<code>WebhookConfiguration</code>资源yaml。执行完成后可以看到<code>api/v1</code>目录下生成了<code>app_webhook.go</code>，可以看到里面已经生成了webhook的接口方法，我们只需要编写我们需要的逻辑即可。下面是生成的代码片段：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">//+kubebuilder:webhook:path=/mutate-xjin-xjin-com-v1-app,mutating=true,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=mapp.kb.io,admissionReviewVersions=v1
+</span><span class="c1"></span>
+<span class="kd">var</span> <span class="nx">_</span> <span class="nx">webhook</span><span class="p">.</span><span class="nx">Defaulter</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">App</span><span class="p">{}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">Default</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;default&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+  <span class="c1">// TODO(user): fill in your defaulting logic.
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="c1">//+kubebuilder:webhook:path=/validate-xjin-xjin-com-v1-app,mutating=false,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=vapp.kb.io,admissionReviewVersions=v1
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">_</span> <span class="nx">webhook</span><span class="p">.</span><span class="nx">Validator</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">App</span><span class="p">{}</span>
+
+<span class="c1">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">ValidateCreate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;validate create&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+
+	<span class="c1">// TODO(user): fill in your validation logic upon object creation.
+</span><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="c1">// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">ValidateUpdate</span><span class="p">(</span><span class="nx">old</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">Object</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;validate update&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+
+	<span class="c1">// TODO(user): fill in your validation logic upon object update.
+</span><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></div><p><code>Defaulter</code>和<code>Validator</code>这两个interface就代表着<code>MutatingWebhookServer</code> 和 <code>ValidatingWebhookServer</code>。下面说明一下Webhook相关的<code>kubebuilder</code>作用注释</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">//+kubebuilder:webhook:path=/mutate-xjin-xjin-com-v1-app,mutating=true,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=mapp.kb.io,admissionReviewVersions=v1
+</span></code></pre></div><ul>
+<li>failurePolicy：当API Server与Webhook Server通信失败时的行为，可选<code>fail</code>和<code>ignore</code>。</li>
+<li>groups、resources：表示哪个GVR在发生变化时会触发Webhook请求。</li>
+<li>name：Webhook的名称，生成的Configuration资源中与此名称对应。</li>
+<li>path：Webhook处理请求的path，生成的Configuration资源中path与此处对应。</li>
+<li>verbs：表示在指定资源发生哪些变化时会触发Webhook。</li>
+</ul>
+<h2 id="实践中的用途">实践中的用途</h2>
+<ul>
+<li>云原生社区中火热的<code>Istio</code>服务网格，就是通过Mutating webhooks来自动地将数据面<code>Envoy</code>作为sidecar注入到Pod中的。</li>
+<li>对于自定义资源（CR, Custom resource），单个字段的类型、非空等校验规则我们可以在CRD中定义，但是对于具体值、或者多个字段组合起来的复杂校验，则可以通过Validating webhooks实现。</li>
+<li>在中间件Operator开发过程中，各种CR可能会存在某种程度上的耦合或绑定。比如Kafka依赖的ZooKeeper是通过Operator部署的一种CR，那么删除该ZK的CR时，我们可以通过Webhook在删除请求时检查该ZK是否在管理着Kafka，如果有，则拒绝删除请求。</li>
+<li>一个容器云管理平台中，可以自定义配额管理机制，比如根据Pod上的Label区分所属租户，对租户进行配额限制，超出租户配额限制，即使物理资源足够，也会拒绝Pod创建。</li>
+<li>&hellip;&hellip;</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-11-12</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" class="prev" rel="prev" title="K8s拓扑分布约束实现Redis高可用调度的方案设计"><i class="fas fa-angle-left fa-fw"></i>K8s拓扑分布约束实现Redis高可用调度的方案设计</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

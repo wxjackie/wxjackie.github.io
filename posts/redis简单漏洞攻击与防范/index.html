@@ -135,15 +135,15 @@ save
 <p>在redis.conf文件中写入一行记录：<code>bind 127.0.0.1 </code>，然后重启Redis生效。也存在例外情况，如果Redis以root用户运行，攻击者借助已有的web shell，可以利用该Redis来反弹shell实现提权。？</p>
 <h3 id="2设置防火墙策略">2.设置防火墙策略</h3>
 <p>通过iptables，仅允许指定的ip来访问Redis服务</p>
-<pre><code>iptables -A INPUT -s x.x.x.x -p tcp --dport 6379 -j ACCEPT
+<pre tabindex="0"><code>iptables -A INPUT -s x.x.x.x -p tcp --dport 6379 -j ACCEPT
 </code></pre><h3 id="3设置访问密码">3.设置访问密码</h3>
 <p>在redis.conf中写入<code>requirepass {your_password}</code>，设置一个安全度高的密码。</p>
 <h3 id="4使用低权限用户运行redis">4.使用低权限用户运行Redis</h3>
 <p>使用低权限用户运行Redis，并禁用该账号的远程登录，使用新用户并重启Redis生效。</p>
-<pre><code>useradd -M -s /sbin/nologin {username}
+<pre tabindex="0"><code>useradd -M -s /sbin/nologin {username}
 </code></pre><h3 id="5屏蔽重要指令">5.屏蔽重要指令</h3>
 <p>可以将一些重要命令设置为空，即禁用，也可以重命名成更复杂的名字。修改完成后需要重启Redis生效。</p>
-<pre><code>rename-command config &quot;&quot;
+<pre tabindex="0"><code>rename-command config &quot;&quot;
 rename-command flushall &quot;&quot;
 rename-command flushdb &quot;&quot;
 rename-command shutdown shutdown_wxj
@@ -176,7 +176,7 @@ rename-command shutdown shutdown_wxj
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>
