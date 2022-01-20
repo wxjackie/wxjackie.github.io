@@ -3,9 +3,16 @@
         <title>XJin&#39;s Blog</title>
         <link>http://xjin.wang/</link>
         <description>XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 12 Nov 2021 10:42:03 &#43;0800</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 20 Jan 2022 11:04:02 &#43;0800</lastBuildDate>
             <atom:link href="http://xjin.wang/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>ElasticSearch索引与架构原理分享</title>
+    <link>http://xjin.wang/resources/es-index-principle.pdf</link>
+    <pubDate>Thu, 20 Jan 2022 11:04:02 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/resources/es-index-principle.pdf</guid>
+    <description><![CDATA[最近在部门内部做了一个关于ElasticSearch索引原理的分享，在此对PPT做个记录。]]></description>
+</item><item>
     <title>K8s Admission Webhook深入实践</title>
     <link>http://xjin.wang/posts/k8s-webhook/</link>
     <pubDate>Fri, 12 Nov 2021 10:42:03 &#43;0800</pubDate>

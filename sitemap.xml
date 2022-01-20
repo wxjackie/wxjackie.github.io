@@ -2,9 +2,10 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>http://xjin.wang/resources/es-index-principle.pdf</loc><lastmod>2022-01-20T11:04:02&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/posts/</loc><lastmod>2022-01-20T11:04:02&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/</loc><lastmod>2022-01-20T11:04:02&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/posts/k8s-webhook/</loc><lastmod>2021-11-12T10:42:03&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/posts/</loc><lastmod>2021-11-12T10:42:03&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/</loc><lastmod>2021-11-12T10:42:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/categories/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/tags/k8s/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/categories/k8s/</loc><lastmod>2021-08-16T14:40:16&#43;08:00</lastmod></url><url>
