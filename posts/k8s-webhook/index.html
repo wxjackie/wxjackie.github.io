@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/k8s-webhook\/"
-        },"genre": "posts","wordcount":  2505 ,
+        },"genre": "posts","wordcount":  2507 ,
         "url": "http:\/\/xjin.wang\/posts\/k8s-webhook\/","datePublished": "2021-11-12T10:42:03+08:00","dateModified": "2021-11-12T10:42:03+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -77,8 +77,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">K8s Admission Webhook深入实践</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-11-12">2021-11-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2505 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-11-12">2021-11-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2507 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -96,6 +96,7 @@
       </ul>
     </li>
     <li><a href="#实践中的用途">实践中的用途</a></li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><blockquote>
@@ -129,10 +130,7 @@
 <li>K8s v1.16+：<code>admissionregistration.k8s.io/v1</code></li>
 <li>K8s v1.9：<code>admissionregistration.k8s.io/v1beta1</code></li>
 </ul>
-<p><a href="https://blog.hdls.me/15564491070483.html" target="_blank" rel="noopener noreffer">https://blog.hdls.me/15564491070483.html</a></p>
-<p><a href="https://cloudnative.to/blog/mutating-admission-webhook/" target="_blank" rel="noopener noreffer">https://cloudnative.to/blog/mutating-admission-webhook/</a></p>
 <h2 id="kubebuilder构建webhook">kubebuilder构建Webhook</h2>
-<p><a href="https://blog.hdls.me/15708754600835.html" target="_blank" rel="noopener noreffer">https://blog.hdls.me/15708754600835.html</a></p>
 <p>通常我们使用<code>kubebuilder</code>作为Operator的脚手架，它可以帮助我们方便的构建CRD和Controller的代码。同时，它也可以帮助我们在Operator中使用Admission webhooks。Kubebuilder帮助我们简化了在Operator中使用Webhook的操作流程， 我们仅仅需要编写<code>Defaulter</code>和<code>Validator</code>的逻辑即可。</p>
 <p>Kubebuilder 会帮你处理其余无关业务逻辑的部分，比如下面这些：</p>
 <ol>
@@ -200,6 +198,12 @@ $ make manifest
 <li>在中间件Operator开发过程中，各种CR可能会存在某种程度上的耦合或绑定。比如Kafka依赖的ZooKeeper是通过Operator部署的一种CR，那么删除该ZK的CR时，我们可以通过Webhook在删除请求时检查该ZK是否在管理着Kafka，如果有，则拒绝删除请求。</li>
 <li>一个容器云管理平台中，可以自定义配额管理机制，比如根据Pod上的Label区分所属租户，对租户进行配额限制，超出租户配额限制，即使物理资源足够，也会拒绝Pod创建。</li>
 <li>&hellip;&hellip;</li>
+</ul>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://blog.hdls.me/15564491070483.html" target="_blank" rel="noopener noreffer">https://blog.hdls.me/15564491070483.html</a></li>
+<li><a href="https://cloudnative.to/blog/mutating-admission-webhook/" target="_blank" rel="noopener noreffer">https://cloudnative.to/blog/mutating-admission-webhook/</a></li>
+<li><a href="https://blog.hdls.me/15708754600835.html" target="_blank" rel="noopener noreffer">https://blog.hdls.me/15708754600835.html</a></li>
 </ul>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
