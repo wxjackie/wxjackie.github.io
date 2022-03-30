@@ -3,7 +3,14 @@
         <title>All Posts - XJin&#39;s Blog</title>
         <link>http://xjin.wang/posts/</link>
         <description>All Posts | XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 20 Jan 2022 11:04:02 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 07 Mar 2022 20:17:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>探索Kubernetes集群联邦方案</title>
+    <link>http://xjin.wang/posts/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6/</link>
+    <pubDate>Mon, 07 Mar 2022 20:17:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/posts/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6/</guid>
+    <description><![CDATA[分析K8s集群联邦机制的需求以及社区主流的解决方案。]]></description>
+</item><item>
     <title>ElasticSearch索引与架构原理分享</title>
     <link>http://xjin.wang/resources/es-index-principle.pdf</link>
     <pubDate>Thu, 20 Jan 2022 11:04:02 &#43;0800</pubDate>
