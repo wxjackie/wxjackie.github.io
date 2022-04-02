@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Redis的cluster-announce配置在容器化场景的应用思考 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="Redis的cluster-announce配置在容器化场景的应用思考" />
+<meta property="og:description" content="使用Redis的cluster-announce相关配置，帮助我们简化Redis容器化管理的应用思路。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://xjin.wang/posts/redis-cluster-announce%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%8C%96%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%80%9D%E8%80%83/" /><meta property="og:image" content="http://xjin.wang/app-touch-icon.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-03-30T19:53:16+08:00" />
+<meta property="article:modified_time" content="2021-03-30T19:53:16+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://xjin.wang/app-touch-icon.png"/>
+
+<meta name="twitter:title" content="Redis的cluster-announce配置在容器化场景的应用思考"/>
+<meta name="twitter:description" content="使用Redis的cluster-announce相关配置，帮助我们简化Redis容器化管理的应用思路。"/>
+<meta name="application-name" content="XJin Blog">
+<meta name="apple-mobile-web-app-title" content="XJin Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/panda.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://xjin.wang/posts/redis-cluster-announce%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%8C%96%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%80%9D%E8%80%83/" /><link rel="prev" href="http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" /><link rel="next" href="http://xjin.wang/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Redis的cluster-announce配置在容器化场景的应用思考",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/xjin.wang\/posts\/redis-cluster-announce%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%8C%96%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%80%9D%E8%80%83\/"
+        },"genre": "posts","keywords": "Redis, 云原生, K8s","wordcount":  1768 ,
+        "url": "http:\/\/xjin.wang\/posts\/redis-cluster-announce%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%8C%96%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%80%9D%E8%80%83\/","datePublished": "2021-03-30T19:53:16+08:00","dateModified": "2021-03-30T19:53:16+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Author"},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Redis的cluster-announce配置在容器化场景的应用思考</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/"><i class="far fa-folder fa-fw"></i>中间件</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-03-30">2021-03-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1768 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#容器化场景下的用途">容器化场景下的用途</a></li>
+    <li><a href="#补充说明">补充说明</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>Redis的<code>cluster-announce</code>配置可以帮助我们在Redis Cluster容器化场景下，由于NAT导致默认内部IP无法互相连通，需要走网关或端口转发时使用的配置，引用Redis 5.0官方的配置描述如下：</p>
+<pre tabindex="0"><code>########################## CLUSTER DOCKER/NAT support  ########################
+# In certain deployments, Redis Cluster nodes address discovery fails, because
+# addresses are NAT-ted or because ports are forwarded (the typical case is
+# Docker and other containers).
+#
+# In order to make Redis Cluster working in such environments, a static
+# configuration where each node knows its public address is needed. The
+# following two options are used for this scope, and are:
+#
+# * cluster-announce-ip
+# * cluster-announce-port
+# * cluster-announce-bus-port
+#
+# Each instruct the node about its address, client port, and cluster message
+# bus port. The information is then published in the header of the bus packets
+# so that other nodes will be able to correctly map the address of the node
+# publishing the information.
+#
+# If the above options are not used, the normal Redis Cluster auto-detection
+# will be used instead.
+</code></pre></blockquote>
+<h2 id="容器化场景下的用途">容器化场景下的用途</h2>
+<p>这组配置是相对比较冷门的，社区<a href="https://github.com/redis/redis/issues/2527" target="_blank" rel="noopener noreffer">相关issue</a>也是多机跑Docker部署Redis Cluster时，发现该场景下Redis集群的每个节点需要一个<strong>外部通告地址</strong>，才提出的这个需求，那时Redis 3.2版本已经release了。而且正常线上环境，无论是云主机还是容器化的Pod，都能保证彼此是网络互通的，才会部署Redis Cluster。</p>
+<p>但是在容器化的场景中，经过一些场景验证，我发现这个配置可以帮我们简化很多之前管控处理的逻辑。</p>
+<p>下面列举一个场景：假设我们用一个<code>StatefulSet</code>部署一个3主3从的Redis Cluster，使编号为偶数的Pod（0,2,4）为master，编号为奇数的Pod（1,3,5）为slave</p>
+<p>集群组建完成后，对其中一个节点，这里选择1号Pod，发送<code>cluster nodes</code>，可以观察集群拓扑如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">root@proxy-cluster2-6379-0-1:/data# redis-cli cluster nodes
+5d0161fb2ee7dabd5dacb50ad689b2f6a5b9fd9e 10.17.136.37:6379@16379 myself,slave c357283ab9f50917b2ae647603d05dca416a7018 <span class="m">0</span> <span class="m">1648798492000</span> <span class="m">1</span> connected
+b3a9205ed85cbf11d84315ab182261fa95697b46 10.17.136.33:6379@16379 slave c11ed6cdc0f15954c6ec2f8db1f0bf53f5005f7c <span class="m">0</span> <span class="m">1648798493372</span> <span class="m">4</span> connected
+c11ed6cdc0f15954c6ec2f8db1f0bf53f5005f7c 10.17.139.14:6379@16379 master - <span class="m">0</span> <span class="m">1648798491369</span> <span class="m">3</span> connected 0-5461
+c357283ab9f50917b2ae647603d05dca416a7018 10.17.139.47:6379@16379 master - <span class="m">0</span> <span class="m">1648798492000</span> <span class="m">2</span> connected 10923-16383
+bc41ca58cfd3dd2bc3c2dd622819b4df8787c879 10.17.139.59:6379@16379 master - <span class="m">0</span> <span class="m">1648798491000</span> <span class="m">5</span> connected 5462-10922
+ab5ec582ae262ff55cbea3afa609736d5ff72737 10.17.180.20:6379@16379 slave bc41ca58cfd3dd2bc3c2dd622819b4df8787c879 <span class="m">0</span> <span class="m">1648798492370</span> <span class="m">6</span> connected
+</code></pre></div><p>这时我们保存该Pod（IP为<code>10.17.136.37</code>）的<code>nodes.conf</code>，即自动生成的集群拓扑配置文件，然后删掉该Pod。由于Sts的机制，这个Pod会被自动重建，观察到重建后1号Pod的IP变化为<code>10.17.135.30</code>。</p>
+<p>如果不使用<code>cluster-announce-ip</code>配置指明当前Pod地址，重新启动Redis进程时，直接使用之前残留的<code>nodes.conf</code>文件的话，会出现如下现象：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/redis-cluster-announce-conf/err-condition.png"
+        data-srcset="/img/redis-cluster-announce-conf/err-condition.png, /img/redis-cluster-announce-conf/err-condition.png 1.5x, /img/redis-cluster-announce-conf/err-condition.png 2x"
+        data-sizes="auto"
+        alt="/img/redis-cluster-announce-conf/err-condition.png"
+        title="err-condition" /></p>
+<p>残留的<code>nodes.conf</code>文件中<code>myself</code>行对应的IP地址是<code>10.17.136.37</code>，但当前Pod已经被重建，IP变为<code>10.17.135.50</code>，直接启动会沿用旧的<code>nodes.conf</code>，从本地执行<code>cluster nodes</code>，发现<code>myself</code>对应的还是旧IP，而从Redis集群中其他节点中执行<code>cluster nodes</code>，是Pod真实的IP。</p>
+<p>之前的Operator在处理这种情况时，都会将Pod挂掉的节点从集群中<code>forget</code>掉并清除遗留的<code>nodes.conf</code>，然后在重建后的Pod上拉起Redis进程，执行<code>cluster meet</code>重新加入集群，如果角色是slave还要执行<code>cluster replicate</code>。</p>
+<p>那么<code>cluster-announce-ip</code>配置如何帮助我们简化处理这种情况呢？使用<code>cluster-announce-ip</code>配置，可以复用遗留的<code>nodes.conf</code>启动和加入集群，并且将<code>myself</code>对应的IP地址更新为<code>cluster-announce-ip</code>，既可以复用<code>nodes.conf</code>，又可以确保本地和其他节点的<code>cluster nodes</code>对于某一节点的IP记录保证一致，这个过程最小化了Operator的逻辑耦合。</p>
+<p>除此之外，<code>cluster-announce-ip</code>还可以用作<strong>向K8s外部暴露Redis Cluster服务</strong>使用，比如业务端无法与Redis Pod直接连通，但可以通过LoadBalancer方式访问。那么我们可以用LoadBalancer的sub service指向一个个Redis Pod，这些Pod配置<code>cluster-announce-ip</code>为LoadBalancer的sub service地址，这样业务边可通过LoadBalancer的形式使用Redis Cluster。</p>
+<h2 id="补充说明">补充说明</h2>
+<ul>
+<li>cluster-announce相关配置在4.0之后正式支持，自描述配置文件：https://raw.githubusercontent.com/redis/redis/4.0/redis.conf</li>
+<li>Redis 6.X之后添加了对于TLS的支持，也可以单独配置announce端口，可以参考6.X版本官方配置。</li>
+</ul>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://github.com/redis/redis/issues/2527" target="_blank" rel="noopener noreffer">https://github.com/redis/redis/issues/2527</a></li>
+<li><a href="https://raw.githubusercontent.com/redis/redis/5.0/redis.conf" target="_blank" rel="noopener noreffer">https://raw.githubusercontent.com/redis/redis/5.0/redis.conf</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-03-30</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/redis/">Redis</a>,&nbsp;<a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>,&nbsp;<a href="/tags/k8s/">K8s</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/" class="prev" rel="prev" title="基于K8s的Redis云原生实践综述"><i class="fas fa-angle-left fa-fw"></i>基于K8s的Redis云原生实践综述</a>
+            <a href="/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" class="next" rel="next" title="K8s拓扑分布约束实现Redis高可用调度的方案设计">K8s拓扑分布约束实现Redis高可用调度的方案设计<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript">window.config={"code":{"maxShownLines":20},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
