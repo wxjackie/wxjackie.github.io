@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6\/"
-        },"genre": "posts","keywords": "K8s, 高可用","wordcount":  5269 ,
+        },"genre": "posts","keywords": "K8s, 高可用","wordcount":  5394 ,
         "url": "http:\/\/xjin.wang\/posts\/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6\/","datePublished": "2022-03-07T20:17:03+08:00","dateModified": "2022-03-07T20:17:03+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -77,7 +77,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">探索Kubernetes集群联邦方案</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/k8s/"><i class="far fa-folder fa-fw"></i>K8s</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-07">2022-03-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;5269 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-07">2022-03-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;5394 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;11 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -309,7 +309,8 @@
 <p>站在Operator开发者的角度，我认为Karmada这种方式能够更易于维护，因为Operator本身也要引入CRD，创建独立的 PropagationPolicy 和 OverridePolicy 可以简化引入新资源需要的步骤，避免引入更多的FederatedCRD，只是缺少了FederatedCRD来收集汇总多集群的资源状态，但这个完全可以通过其他方式实现，在有需要的情况下可以在控制平面新增一个简单的Controller和CRD单独用来维护状态（听起来好像更复杂，但实际情况下这个Controller往往是必要的。）</p>
 <h2 id="总结和展望">总结和展望</h2>
 <p>通过分析大规模单K8s集群可能存在的问题，解读K8s集群联邦机制，分析几个社区主流方案后，我们发现，对于无状态服务，比如原先只需Deployment部署的Web服务，KubeFed和Karmada都是完全可以满足需求的（当然，跨集群服务发现需要额外实现，这个不在本文的讨论范围）。</p>
-<p>但是，对于较为复杂的有状态应用，比如使用Operator机制管理的容器化中间件Redis、Kafka、Zookeeper，对于这些CRD资源，联邦框架目前最多只能帮我们做<strong>资源传播</strong>和<strong>字段覆写</strong>，但对于中间件Operator，这些是远远不够的。</p>
+<p><del>但是，对于较为复杂的有状态应用，比如使用Operator机制管理的容器化中间件Redis、Kafka、Zookeeper，对于这些CRD资源，联邦框架目前最多只能帮我们做<strong>资源传播</strong>和<strong>字段覆写</strong>，但对于中间件Operator，这些是远远不够的。</del></p>
+<p><strong>经过后来的思考和讨论，我们认定集群联邦框架能做的通用逻辑已经足够完善，很难有办法也不应该掺杂入更多的逻辑。复杂的有状态应用的多集群方案，还是需要业务各自去实现兼容，想要直接在子集群中沿用先前单集群中的管控处理逻辑，是过于理想化了。</strong></p>
 <p>以Redis举例，按照集群联邦的设计理念，要尽量把逻辑下放到子集群，那么联邦集群要做的就是把Redis集群CR资源传播到子集群。假如我有联邦集群拥有3个子集群，提交一个Redis CR到联邦控制面，如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">redis.xjin.wang/v1</span><span class="w">
 </span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">RedisCluster</span><span class="w">
@@ -319,7 +320,8 @@
 </span><span class="w">	</span><span class="nt">shards</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
 </span><span class="w">  </span><span class="l">... ...</span><span class="w">
 </span></code></pre></div><p>那么联邦机制会帮我们把这个CR分成1分片、2分片、2分片的3个Redis CR分别下发到3个子集群，由三个子集群中的Redis Operator分别调谐（Reconcile），组建Redis集群。这时问题就来了，我们想要的是Redis集群各个分片的主从跨K8s集群，这样才能实现跨集群维度的高可用，而不是分片分布在各个集群。而且，不同集群的Redis分片如何互相发现也是个问题，在单集群场景中，我们是Operator主动对Redis实例发起<code>CLUSTER MEET</code>命令组建集群和扩容时加入新节点，<strong>但在集群联邦中，各个子集群并没有全局的视角去感知其他子集群的Pod等资源信息</strong>，仍需要我们从联邦控制面感知全局的状态并下发到各个子集群。直觉告诉我们这也并不是一个优雅的方案。</p>
-<p>目前主流的集群联邦框架，对于复杂的有状态应用还缺少统一且优雅的处理机制，随着K8s生态不断成熟，各种复杂应用的逐渐迁移，相信集群联邦的机制也会涌现出更为成熟的解决方案。</p>
+<p><del>目前主流的集群联邦框架，对于复杂的有状态应用还缺少统一且优雅的处理机制，随着K8s生态不断成熟，各种复杂应用的逐渐迁移，相信集群联邦的机制也会涌现出更为成熟的解决方案。</del></p>
+<p>自己动手，丰衣足食！</p>
 <h2 id="参考">参考</h2>
 <ul>
 <li><a href="https://jimmysong.io/kubernetes-handbook/practice/federation.html" target="_blank" rel="noopener noreffer">集群联邦（Cluster Federation）</a></li>
