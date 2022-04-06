@@ -113,7 +113,7 @@
         data-srcset="/img/discuss-k8s-federation/single-cluster.png, /img/discuss-k8s-federation/single-cluster.png 1.5x, /img/discuss-k8s-federation/single-cluster.png 2x"
         data-sizes="auto"
         alt="/img/discuss-k8s-federation/single-cluster.png"
-        title="image-20220329191909410" /></p>
+        title="single-cluster" /></p>
 <p>简单分析下这些问题：单个K8s集群的基础设置是有可能被业务影响导致不稳定进而影响其他业务、每个业务的高可用调度的实现水平、验证完备程度也是不同的。可以总结为<strong>故障隔离较差、跨机房高可用缺乏硬性限制</strong>。</p>
 <h2 id="设计理念与目标">设计理念与目标</h2>
 <p>考虑到集群联邦的通用性和故障隔离性，在设计时要尽量保证联邦控制面逻辑简洁，业务逻辑仍下放到成员（Member）集群，由各成员集群处理。因此，集群联邦最基础的功能，就是<strong>跨集群资源转播</strong>，比如我们声明一个Deployment，联邦需要帮我们把这个Deployment传播到成员集群，在成员集群中按照一定规则各自创建Deployment。</p>
