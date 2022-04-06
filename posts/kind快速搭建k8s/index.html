@@ -110,47 +110,47 @@
 <p>这里默认本机环境已经安装好了Docker，安装Docker的安装文档可直接参考官方文档：https://docs.docker.com/get-docker/</p>
 <p>如果要通过命令行与K8s进行交互，需要安装<code>kubectl</code>，安装方法可参考：https://kubernetes.io/docs/tasks/tools/#install-kubectl</p>
 <p>下面介绍在Linux环境下通过Kind二进制文件的安装方式，首先下载二进制并移动到PATH路径中</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
-chmod +x ./kind
-mv ./kind /some-dir-in-your-PATH/kind
-</code></pre></div><p>最简单的搭建命令</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ kind create cluster
-Creating cluster <span class="s2">&#34;kind&#34;</span> ...
- ✓ Ensuring node image <span class="o">(</span>kindest/node:v1.19.1<span class="o">)</span> 🖼
- ✓ Preparing nodes 📦
- ✓ Creating kubeadm config 📜
- ✓ Starting control-plane 🕹️
-Cluster creation complete. You can now use the cluster with:
-
-<span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>kind get kubeconfig-path --name<span class="o">=</span><span class="s2">&#34;kind&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
-kubectl cluster-info
-</code></pre></div><p>默认创建出来的K8s集群名为<code>kind</code>，安装完成后的末尾会提示修改<code>KUBECONFIG</code>环境变量，指定<code>kubectl</code>访问该Kind K8s集群。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+</span></span><span class="line"><span class="cl">chmod +x ./kind
+</span></span><span class="line"><span class="cl">mv ./kind /some-dir-in-your-PATH/kind
+</span></span></code></pre></div><p>最简单的搭建命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ kind create cluster
+</span></span><span class="line"><span class="cl">Creating cluster <span class="s2">&#34;kind&#34;</span> ...
+</span></span><span class="line"><span class="cl"> ✓ Ensuring node image <span class="o">(</span>kindest/node:v1.19.1<span class="o">)</span> 🖼
+</span></span><span class="line"><span class="cl"> ✓ Preparing nodes 📦
+</span></span><span class="line"><span class="cl"> ✓ Creating kubeadm config 📜
+</span></span><span class="line"><span class="cl"> ✓ Starting control-plane 🕹️
+</span></span><span class="line"><span class="cl">Cluster creation complete. You can now use the cluster with:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>kind get kubeconfig-path --name<span class="o">=</span><span class="s2">&#34;kind&#34;</span><span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">kubectl cluster-info
+</span></span></code></pre></div><p>默认创建出来的K8s集群名为<code>kind</code>，安装完成后的末尾会提示修改<code>KUBECONFIG</code>环境变量，指定<code>kubectl</code>访问该Kind K8s集群。</p>
 <p>如果创建了多个K8s集群，可以使用<code>kubectl cluster-info --context</code>进行交互指定。</p>
 <p>我个人使用Kind的理由是因为它能最快地模拟一个K8s多节点环境，下面介绍模拟多节点的Kind使用方法。</p>
 <h2 id="模拟k8s多节点环境">模拟K8s多节点环境</h2>
 <p>我个人使用Kind的理由是因为它能最快地模拟一个K8s多节点环境，下面介绍模拟多节点的Kind使用方法。</p>
 <p>默认安装的集群只部署了一个控制节点，如果需要部署多节点集群，我们可以通过配置文件的方式来创建多个容器来模拟多个节点。使用Kind命令创建集群的时候，支持通过 <code>--config</code> 参数传递配置文件给 <code>Kind</code>，配置文件可修改的内容主要有 role 和 节点使用的镜像。例如：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># a cluster with 3 control-plane nodes and 3 workers</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Cluster</span><span class="w">
-</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">kind.x-k8s.io/v1alpha4</span><span class="w">
-</span><span class="w"></span><span class="nt">featureGates</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">FeatureGateName</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="w"></span><span class="nt">nodes</span><span class="p">:</span><span class="w">
-</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
-</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
-</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
-</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
-</span><span class="w">	</span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
-</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
-</span><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
-</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
-</span><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
-</span></code></pre></div><p>然后使用上述配置文件创建Kind集群</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind create cluster --config kind-cluster.yaml
-</code></pre></div><p>创建完成后，使用<code>kubectl get no</code>就可以看到多节点K8s集群了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># a cluster with 3 control-plane nodes and 3 workers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Cluster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">kind.x-k8s.io/v1alpha4</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">featureGates</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">FeatureGateName</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">nodes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
+</span></span></span></code></pre></div><p>然后使用上述配置文件创建Kind集群</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kind create cluster --config kind-cluster.yaml
+</span></span></code></pre></div><p>创建完成后，使用<code>kubectl get no</code>就可以看到多节点K8s集群了。</p>
 <p>实际使用时我们要需要把本地的Docker镜像导入到模拟的K8s集群中，命令如下</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind load docker-image my-custom-image-0 my-custom-image-1
-</code></pre></div></div><div class="post-footer" id="post-footer">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kind load docker-image my-custom-image-0 my-custom-image-1
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
@@ -178,7 +178,7 @@ kubectl cluster-info
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

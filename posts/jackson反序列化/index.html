@@ -97,22 +97,22 @@
 </blockquote>
 <h2 id="问题分析">问题分析</h2>
 <p>举个例子，在最简单的使用Jackson进行反序列化的场景下，我们的用法大致如下</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 假设我们的使用的类如下
-</span><span class="c1"></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
-  <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="n">String</span> <span class="n">email</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></div><p>接口返回的JSON</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;xjin&#34;</span><span class="p">,</span> <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;test@email&#34;</span><span class="p">}</span>
-</code></pre></div><p>Jackson反序列化代码片段</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// 举例http客户端采用restTemplate
-</span><span class="c1"></span><span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">JsonNode</span><span class="o">&gt;</span> <span class="n">response</span> <span class="o">=</span> <span class="n">restTemplate</span><span class="o">.</span><span class="na">exchange</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">httpEntity</span><span class="o">,</span> <span class="n">JsonNode</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">paramMap</span><span class="o">);</span>
-<span class="n">String</span> <span class="n">jsonStr</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getBody</span><span class="o">());</span>
-<span class="n">ObjectMapper</span> <span class="n">mapper</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectMapper</span><span class="o">();</span>
-<span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">jsonStr</span><span class="o">,</span> <span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</code></pre></div><p>这时还是正常运作的，如果接口返回多了一个<code>address</code>字段，JSON变成了这样</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;xjin&#34;</span><span class="p">,</span> <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;test@email&#34;</span><span class="p">,</span> <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;China&#34;</span><span class="p">}</span>
-</code></pre></div><p>这个时候就会报<code>UnrecognizedPropertyException</code>异常，总之，只要JSON中的某个属性没有映射到其Java对象，Jackson都会抛出此异常。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 假设我们的使用的类如下
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">String</span> <span class="n">email</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>接口返回的JSON</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;xjin&#34;</span><span class="p">,</span> <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;test@email&#34;</span><span class="p">}</span>
+</span></span></code></pre></div><p>Jackson反序列化代码片段</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 举例http客户端采用restTemplate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">JsonNode</span><span class="o">&gt;</span> <span class="n">response</span> <span class="o">=</span> <span class="n">restTemplate</span><span class="o">.</span><span class="na">exchange</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="n">HttpMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">,</span> <span class="n">httpEntity</span><span class="o">,</span> <span class="n">JsonNode</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">paramMap</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">String</span> <span class="n">jsonStr</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getBody</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl"><span class="n">ObjectMapper</span> <span class="n">mapper</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectMapper</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">jsonStr</span><span class="o">,</span> <span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span></code></pre></div><p>这时还是正常运作的，如果接口返回多了一个<code>address</code>字段，JSON变成了这样</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;xjin&#34;</span><span class="p">,</span> <span class="nt">&#34;email&#34;</span><span class="p">:</span> <span class="s2">&#34;test@email&#34;</span><span class="p">,</span> <span class="nt">&#34;address&#34;</span><span class="p">:</span> <span class="s2">&#34;China&#34;</span><span class="p">}</span>
+</span></span></code></pre></div><p>这个时候就会报<code>UnrecognizedPropertyException</code>异常，总之，只要JSON中的某个属性没有映射到其Java对象，Jackson都会抛出此异常。</p>
 <h2 id="处理方法">处理方法</h2>
 <p>通常情况下，依赖服务的接口并不仅仅是为我们服务的，所以我们无法要求他们的响应不扩充字段，但怎样能使字段的增加不对我们的反序列化造成影响呢，目前有两种方法：</p>
 <ol>
@@ -120,15 +120,15 @@
 <li><code>ObjectMapper</code>配置<code>FAIL_ON_UNKNOWN_PROPERTIES</code>，设置为<code>false</code></li>
 </ol>
 <p>两种方法代码分别如下所示</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@JsonIgnoreProperties</span><span class="o">(</span><span class="n">ignoreUnknown</span><span class="o">=</span><span class="kc">true</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
-  <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="n">String</span> <span class="n">email</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">//...
-</span><span class="c1"></span><span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">DeserializationFeature</span><span class="o">.</span><span class="na">FAIL_ON_UNKNOWN_PROPERTIES</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-<span class="c1">//...
-</span></code></pre></div><h2 id="总结">总结</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@JsonIgnoreProperties</span><span class="o">(</span><span class="n">ignoreUnknown</span><span class="o">=</span><span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">private</span> <span class="n">String</span> <span class="n">email</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">objectMapper</span><span class="o">.</span><span class="na">configure</span><span class="o">(</span><span class="n">DeserializationFeature</span><span class="o">.</span><span class="na">FAIL_ON_UNKNOWN_PROPERTIES</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//...
+</span></span></span></code></pre></div><h2 id="总结">总结</h2>
 <p>经过验证，两种方法都可以解决”未知字段导致反序列化异常“的问题，但是哪种方法更好些呢？我个人认为使用<code>ObjectMapper</code>配置的方式更好，因为</p>
 <ul>
 <li>大多数接口响应包装类都需要进行处理，每个类都要手动加注解，容易遗漏。</li>
@@ -167,7 +167,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

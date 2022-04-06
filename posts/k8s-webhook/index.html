@@ -105,8 +105,8 @@
 </blockquote>
 <h2 id="准入控制器介绍">准入控制器介绍</h2>
 <p>根据官方文档的描述，准入控制器是一段代码。它会在请求通过认证和授权后，对象被持久化之前拦截到达API Server的请求。K8s默认有多个准入控制器，并且被编译进<code>kube-apiserver</code>二进制文件。执行命令</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kube-apiserver -h <span class="p">|</span> grep enable-admission-plugins
-</code></pre></div><p>就可以看到，当前K8s集群默认启动的准入控制器插件有哪些。可以从官方文档了解各个准入控制器的作用：<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#what-does-each-admission-controller-do" target="_blank" rel="noopener noreffer">What does each admission controller do?</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kube-apiserver -h <span class="p">|</span> grep enable-admission-plugins
+</span></span></code></pre></div><p>就可以看到，当前K8s集群默认启动的准入控制器插件有哪些。可以从官方文档了解各个准入控制器的作用：<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#what-does-each-admission-controller-do" target="_blank" rel="noopener noreffer">What does each admission controller do?</a></p>
 <p>其中有两个特殊的、拥有极高的灵活性的控制器，也是我们本文主要关注的：<code>MutatingAdmissionWebhook</code>和<code>ValidatingAdmissionWebhook</code>，通常来说，它们分别负责<strong>执行插入变更和校验</strong>的工作。K8s的动态准入控制，目前主要也是指这两种<code>Webhook</code>，还有一种<code>Initializer</code>的机制，目前存在较长的时间未更新，暂不介绍。</p>
 <p>Mutating webhook可以在资源对象请求时，通过创建补丁来修改对象；Validating webhook可以对请求进行校验和拒绝，但无法修改请求中的资源对象。</p>
 <h2 id="webhook使用原理">Webhook使用原理</h2>
@@ -142,49 +142,49 @@
 <p>下面假定一个自定义资源类型<code>App</code>，使用<code>kubebuilder</code>初始化一个Operator框架，并部署Webhook。</p>
 <h3 id="初始化crd和controller">初始化CRD和Controller</h3>
 <p>执行命令</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ go mod init xjin.com/demo-operator
-$ <span class="c1"># 初始化Operator项目框架</span>
-$ kubebuilder init --domain xjin.com --owner <span class="s2">&#34;xjin&#34;</span>
-$ <span class="c1"># 创建API、Controller代码</span>
-$ kubebuilder create api --group xjin --version v1 --kind App
-$ <span class="c1"># 生成CRD、RBAC等资源yaml</span>
-$ make manifest
-</code></pre></div><p>然后将生成的CRD、RBAC等资源，apply到目标K8s集群上。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ go mod init xjin.com/demo-operator
+</span></span><span class="line"><span class="cl">$ <span class="c1"># 初始化Operator项目框架</span>
+</span></span><span class="line"><span class="cl">$ kubebuilder init --domain xjin.com --owner <span class="s2">&#34;xjin&#34;</span>
+</span></span><span class="line"><span class="cl">$ <span class="c1"># 创建API、Controller代码</span>
+</span></span><span class="line"><span class="cl">$ kubebuilder create api --group xjin --version v1 --kind App
+</span></span><span class="line"><span class="cl">$ <span class="c1"># 生成CRD、RBAC等资源yaml</span>
+</span></span><span class="line"><span class="cl">$ make manifest
+</span></span></code></pre></div><p>然后将生成的CRD、RBAC等资源，apply到目标K8s集群上。</p>
 <h3 id="生成并编写webhook">生成并编写Webhook</h3>
 <p>执行命令</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ kubebuilder create webhook --group xjin --version v1 --kind App --defaulting --programmatic-validation<span class="se">\
-</span><span class="se"></span>$ make manifests
-</code></pre></div><p>分别生成了Webhook的代码和<code>WebhookConfiguration</code>资源yaml。执行完成后可以看到<code>api/v1</code>目录下生成了<code>app_webhook.go</code>，可以看到里面已经生成了webhook的接口方法，我们只需要编写我们需要的逻辑即可。下面是生成的代码片段：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">//+kubebuilder:webhook:path=/mutate-xjin-xjin-com-v1-app,mutating=true,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=mapp.kb.io,admissionReviewVersions=v1
-</span><span class="c1"></span>
-<span class="kd">var</span> <span class="nx">_</span> <span class="nx">webhook</span><span class="p">.</span><span class="nx">Defaulter</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">App</span><span class="p">{}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">Default</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;default&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-  <span class="c1">// TODO(user): fill in your defaulting logic.
-</span><span class="c1"></span><span class="p">}</span>
-
-<span class="c1">//+kubebuilder:webhook:path=/validate-xjin-xjin-com-v1-app,mutating=false,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=vapp.kb.io,admissionReviewVersions=v1
-</span><span class="c1"></span><span class="kd">var</span> <span class="nx">_</span> <span class="nx">webhook</span><span class="p">.</span><span class="nx">Validator</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">App</span><span class="p">{}</span>
-
-<span class="c1">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">ValidateCreate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
-	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;validate create&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-
-	<span class="c1">// TODO(user): fill in your validation logic upon object creation.
-</span><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-
-<span class="c1">// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">ValidateUpdate</span><span class="p">(</span><span class="nx">old</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">Object</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;validate update&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
-
-	<span class="c1">// TODO(user): fill in your validation logic upon object update.
-</span><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
-<span class="p">}</span>
-</code></pre></div><p><code>Defaulter</code>和<code>Validator</code>这两个interface就代表着<code>MutatingWebhookServer</code> 和 <code>ValidatingWebhookServer</code>。下面说明一下Webhook相关的<code>kubebuilder</code>作用注释</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">//+kubebuilder:webhook:path=/mutate-xjin-xjin-com-v1-app,mutating=true,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=mapp.kb.io,admissionReviewVersions=v1
-</span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ kubebuilder create webhook --group xjin --version v1 --kind App --defaulting --programmatic-validation<span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>$ make manifests
+</span></span></code></pre></div><p>分别生成了Webhook的代码和<code>WebhookConfiguration</code>资源yaml。执行完成后可以看到<code>api/v1</code>目录下生成了<code>app_webhook.go</code>，可以看到里面已经生成了webhook的接口方法，我们只需要编写我们需要的逻辑即可。下面是生成的代码片段：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//+kubebuilder:webhook:path=/mutate-xjin-xjin-com-v1-app,mutating=true,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=mapp.kb.io,admissionReviewVersions=v1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">_</span> <span class="nx">webhook</span><span class="p">.</span><span class="nx">Defaulter</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">App</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">Default</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;default&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// TODO(user): fill in your defaulting logic.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//+kubebuilder:webhook:path=/validate-xjin-xjin-com-v1-app,mutating=false,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=vapp.kb.io,admissionReviewVersions=v1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">_</span> <span class="nx">webhook</span><span class="p">.</span><span class="nx">Validator</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">App</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">ValidateCreate</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;validate create&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// TODO(user): fill in your validation logic upon object creation.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">App</span><span class="p">)</span> <span class="nf">ValidateUpdate</span><span class="p">(</span><span class="nx">old</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">Object</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">applog</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;validate update&#34;</span><span class="p">,</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// TODO(user): fill in your validation logic upon object update.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>Defaulter</code>和<code>Validator</code>这两个interface就代表着<code>MutatingWebhookServer</code> 和 <code>ValidatingWebhookServer</code>。下面说明一下Webhook相关的<code>kubebuilder</code>作用注释</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//+kubebuilder:webhook:path=/mutate-xjin-xjin-com-v1-app,mutating=true,failurePolicy=fail,sideEffects=None,groups=xjin.xjin.com,resources=apps,verbs=create;update,versions=v1,name=mapp.kb.io,admissionReviewVersions=v1
+</span></span></span></code></pre></div><ul>
 <li>failurePolicy：当API Server与Webhook Server通信失败时的行为，可选<code>fail</code>和<code>ignore</code>。</li>
 <li>groups、resources：表示哪个GVR在发生变化时会触发Webhook请求。</li>
 <li>name：Webhook的名称，生成的Configuration资源中与此名称对应。</li>
@@ -233,7 +233,7 @@ $ make manifest
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

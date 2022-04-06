@@ -204,66 +204,66 @@
 </li>
 <li>
 <p>Type Configuration：定义了哪些 K8s资源要被用于联邦管理。比如说想将ConfigMap通过联邦建立在不同集群上时，就必须先Host集群中，通过CRD建立新资源 FederatedConfigMap，接着再建立名称为 configmaps 的 FederatedTypeConfig资源，然后描述ConfigMap要被 FederatedConfigMap 所管理，这样 KubeFed Controllers才能知道如何建立 Federated 资源。一个FederatedTypeConfig的YAML示例：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">core.kubefed.k8s.io/v1beta1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedTypeConfig</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">configmaps</span><span class="w">
-</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">kube-federation-system</span><span class="w">
-</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">federatedType</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l">types.kubefed.k8s.io</span><span class="w">
-</span><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedConfigMap</span><span class="w">
-</span><span class="w">    </span><span class="nt">pluralName</span><span class="p">:</span><span class="w"> </span><span class="l">federatedconfigmaps</span><span class="w">
-</span><span class="w">    </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l">Namespaced</span><span class="w">
-</span><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l">v1beta1</span><span class="w">
-</span><span class="w">  </span><span class="nt">propagation</span><span class="p">:</span><span class="w"> </span><span class="l">Enabled</span><span class="w">
-</span><span class="w">  </span><span class="nt">targetType</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
-</span><span class="w">    </span><span class="nt">pluralName</span><span class="p">:</span><span class="w"> </span><span class="l">configmaps</span><span class="w">
-</span><span class="w">    </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l">Namespaced</span><span class="w">
-</span><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
-</span></code></pre></div><p>一个Federation资源示例：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">types.kubefed.k8s.io/v1beta1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedDeployment</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-deployment</span><span class="w">
-</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">test-namespace</span><span class="w">
-</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="c"># 定义 Deployment 的所有內容，可理解成 Deployment 与 Pod 之间的关联。</span><span class="w">
-</span><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
-</span><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="l">...</span><span class="w">
-</span><span class="w">  </span><span class="nt">placement</span><span class="p">:</span><span class="w">  </span><span class="c"># 定义Federated资源要分散到哪些集群上</span><span class="w">
-</span><span class="w">    </span><span class="nt">clusters</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster2</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster1</span><span class="w">
-</span><span class="w">  </span><span class="nt">overrides</span><span class="p">:</span><span class="w">   </span><span class="c"># 定义修改指定集群的 Federated 资源中的 spec.template 内容，比如副本数，拉取镜像秘钥等特定集群的信息。</span><span class="w">
-</span><span class="w">  </span>- <span class="nt">clusterName</span><span class="p">:</span><span class="w"> </span><span class="l">cluster2</span><span class="w">
-</span><span class="w">    </span><span class="nt">clusterOverrides</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span>- <span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">spec.replicas</span><span class="w">
-</span><span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
-</span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">core.kubefed.k8s.io/v1beta1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedTypeConfig</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">configmaps</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">kube-federation-system</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">federatedType</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l">types.kubefed.k8s.io</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pluralName</span><span class="p">:</span><span class="w"> </span><span class="l">federatedconfigmaps</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l">Namespaced</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l">v1beta1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">propagation</span><span class="p">:</span><span class="w"> </span><span class="l">Enabled</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">targetType</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pluralName</span><span class="p">:</span><span class="w"> </span><span class="l">configmaps</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l">Namespaced</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span></code></pre></div><p>一个Federation资源示例：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">types.kubefed.k8s.io/v1beta1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedDeployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">test-namespace</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="c"># 定义 Deployment 的所有內容，可理解成 Deployment 与 Pod 之间的关联。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">placement</span><span class="p">:</span><span class="w">  </span><span class="c"># 定义Federated资源要分散到哪些集群上</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">clusters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">overrides</span><span class="p">:</span><span class="w">   </span><span class="c"># 定义修改指定集群的 Federated 资源中的 spec.template 内容，比如副本数，拉取镜像秘钥等特定集群的信息。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">clusterName</span><span class="p">:</span><span class="w"> </span><span class="l">cluster2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">clusterOverrides</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">spec.replicas</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></span></span></code></pre></div></li>
 <li>
 <p>Scheduling：KubeFed可以使用<code>ReplicaSchedulingPreference</code>（RSP）机制，实现权重分布，最小/最大限制等语义，这块在使用上比较好理解，示例YAML如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">scheduling.kubefed.k8s.io/v1alpha1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ReplicaSchedulingPreference</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-deployment</span><span class="w">
-</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">test-ns</span><span class="w">
-</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">targetKind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedDeployment</span><span class="w">
-</span><span class="w">  </span><span class="nt">totalReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">15</span><span class="w"> 
-</span><span class="w">  </span><span class="nt">clusters</span><span class="p">:</span><span class="w"> 
-</span><span class="w">    </span><span class="s2">&#34;*&#34;</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
-</span><span class="w">      </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">12</span><span class="w">
-</span><span class="w">    </span><span class="nt">ap-northeast</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span><span class="w">      </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
-</span><span class="w">      </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">scheduling.kubefed.k8s.io/v1alpha1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ReplicaSchedulingPreference</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">test-ns</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">targetKind</span><span class="p">:</span><span class="w"> </span><span class="l">FederatedDeployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">totalReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">15</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">clusters</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="s2">&#34;*&#34;</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">12</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ap-northeast</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span></code></pre></div></li>
 <li>
 <p>Multi-Cluster DNS：实际使用中跨集群的服务发现功能非常复杂，社区中目前已经有很多第三方的工具可以提供基于 DNS 的联邦 Ingress 资源，一般不需要KubeFed在这里做支持。</p>
 </li>
@@ -312,14 +312,14 @@
 <p><del>但是，对于较为复杂的有状态应用，比如使用Operator机制管理的容器化中间件Redis、Kafka、Zookeeper，对于这些CRD资源，联邦框架目前最多只能帮我们做<strong>资源传播</strong>和<strong>字段覆写</strong>，但对于中间件Operator，这些是远远不够的。</del></p>
 <p><strong>经过后来的思考和讨论，我们认定集群联邦框架能做的通用逻辑已经足够完善，很难有办法也不应该掺杂入更多的逻辑。复杂的有状态应用的多集群方案，还是需要业务各自去实现兼容，想要直接在子集群中沿用先前单集群中的管控处理逻辑，是过于理想化了。</strong></p>
 <p>以Redis举例，按照集群联邦的设计理念，要尽量把逻辑下放到子集群，那么联邦集群要做的就是把Redis集群CR资源传播到子集群。假如我有联邦集群拥有3个子集群，提交一个Redis CR到联邦控制面，如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">redis.xjin.wang/v1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">RedisCluster</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">redis-cluster-1</span><span class="w">
-</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">	</span><span class="nt">shards</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
-</span><span class="w">  </span><span class="l">... ...</span><span class="w">
-</span></code></pre></div><p>那么联邦机制会帮我们把这个CR分成1分片、2分片、2分片的3个Redis CR分别下发到3个子集群，由三个子集群中的Redis Operator分别调谐（Reconcile），组建Redis集群。这时问题就来了，我们想要的是Redis集群各个分片的主从跨K8s集群，这样才能实现跨集群维度的高可用，而不是分片分布在各个集群。而且，不同集群的Redis分片如何互相发现也是个问题，在单集群场景中，我们是Operator主动对Redis实例发起<code>CLUSTER MEET</code>命令组建集群和扩容时加入新节点，<strong>但在集群联邦中，各个子集群并没有全局的视角去感知其他子集群的Pod等资源信息</strong>，仍需要我们从联邦控制面感知全局的状态并下发到各个子集群。直觉告诉我们这也并不是一个优雅的方案。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">redis.xjin.wang/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">RedisCluster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">redis-cluster-1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nt">shards</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">... ...</span><span class="w">
+</span></span></span></code></pre></div><p>那么联邦机制会帮我们把这个CR分成1分片、2分片、2分片的3个Redis CR分别下发到3个子集群，由三个子集群中的Redis Operator分别调谐（Reconcile），组建Redis集群。这时问题就来了，我们想要的是Redis集群各个分片的主从跨K8s集群，这样才能实现跨集群维度的高可用，而不是分片分布在各个集群。而且，不同集群的Redis分片如何互相发现也是个问题，在单集群场景中，我们是Operator主动对Redis实例发起<code>CLUSTER MEET</code>命令组建集群和扩容时加入新节点，<strong>但在集群联邦中，各个子集群并没有全局的视角去感知其他子集群的Pod等资源信息</strong>，仍需要我们从联邦控制面感知全局的状态并下发到各个子集群。直觉告诉我们这也并不是一个优雅的方案。</p>
 <p><del>目前主流的集群联邦框架，对于复杂的有状态应用还缺少统一且优雅的处理机制，随着K8s生态不断成熟，各种复杂应用的逐渐迁移，相信集群联邦的机制也会涌现出更为成熟的解决方案。</del></p>
 <p>自己动手，丰衣足食！</p>
 <h2 id="参考">参考</h2>
@@ -357,7 +357,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

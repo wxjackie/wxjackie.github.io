@@ -136,11 +136,11 @@
 </li>
 <li>
 <p>单个Node节点、单个AZ部署Redis集群Pod数上限、必须调度的AZ：<strong>PaaS扩展调度器</strong>提供的语义实现，在Operator创建Redis集群时创建的调度Configmap中直接填写，例如</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">cluster-size</span><span class="p">:</span><span class="w"> </span><span class="m">18</span><span class="w">    </span><span class="l">// redis集群pod总数</span><span class="w">
-</span><span class="w"></span><span class="nt">max-pod-on-node</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">  </span><span class="l">// 单个Node上该Redis集群Pod数上限</span><span class="w">
-</span><span class="w"></span><span class="nt">max-pod-in-zone</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">  </span><span class="l">// 单个AZ内该Redis集群Pod数上限</span><span class="w">
-</span><span class="w"></span><span class="nt">available-zones</span><span class="p">:</span><span class="w"> </span><span class="l">cn-east-1a,cn-east-1b,cn-east-1c // 必须调度的AZ</span><span class="w">
-</span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">cluster-size</span><span class="p">:</span><span class="w"> </span><span class="m">18</span><span class="w">    </span><span class="l">// redis集群pod总数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">max-pod-on-node</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">  </span><span class="l">// 单个Node上该Redis集群Pod数上限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">max-pod-in-zone</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">  </span><span class="l">// 单个AZ内该Redis集群Pod数上限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">available-zones</span><span class="p">:</span><span class="w"> </span><span class="l">cn-east-1a,cn-east-1b,cn-east-1c // 必须调度的AZ</span><span class="w">
+</span></span></span></code></pre></div></li>
 </ul>
 <h3 id="pod拓扑分布约束能力分析">Pod拓扑分布约束能力分析</h3>
 <p>根据官方文档介绍，拓扑分布约束可以用来控制Pods在集群内故障域之间的分布，比如区域、节点和用户自定义的拓扑域等。该特性的核心字段是<code>maxSkew</code>，可以暂时理解为<strong>最大偏差值</strong>，实际意义根据<code>WhenUnsatisfiable</code>的取值不同而有差异：</p>
@@ -155,14 +155,14 @@
 <ul>
 <li>
 <p>单个Node节点、单个AZ部署Redis集群Pod数上限：同一Redis集群Node节点维度</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
-</span><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l">Pod总数/3 // 如果Pod总数能够被3整除，则再减1</span><span class="w">
-</span><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedulegit </span><span class="w">
-</span></code></pre></div><p>同理，如果是多AZ环境在保留上述Node偏差值约束的条件下，再加一条</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
-</span><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l">Pod总数/2 // 如果Pod总数能够被2整除，则再减1</span><span class="w">
-</span><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
-</span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l">Pod总数/3 // 如果Pod总数能够被3整除，则再减1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedulegit </span><span class="w">
+</span></span></span></code></pre></div><p>同理，如果是多AZ环境在保留上述Node偏差值约束的条件下，再加一条</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="l">Pod总数/2 // 如果Pod总数能够被2整除，则再减1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
+</span></span></span></code></pre></div></li>
 <li>
 <p>必须调度的AZ：直接配置Pod的节点亲和性实现，在多AZ环境下，由于有AZ间<code>maxSkew</code>的约束，不会出现有某个AZ调度不到的问题。</p>
 </li>
@@ -171,10 +171,10 @@
 </li>
 <li>
 <p>除了上述硬性约束外，同集群Node维度再额外添加偏好约束，使Pod分布在Node尽可能的均匀。（如果是多AZ再加上Zone维度）</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
-</span><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">ScheduleAnyway</span><span class="w">
-</span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">ScheduleAnyway</span><span class="w">
+</span></span></span></code></pre></div></li>
 </ul>
 <p>水平扩缩容时，分片数变化，Pod总数也会改变，因此水平扩缩容的配置逻辑为：</p>
 <ul>
@@ -226,45 +226,45 @@
 <ol>
 <li>
 <p>推演调度场景中生成的Pod调度配置</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">affinity</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="nt">nodeAffinity</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span><span class="nt">nodeSelectorTerms</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span>- <span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
-</span><span class="w">            </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">In</span><span class="w">
-</span><span class="w">            </span><span class="nt">values</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span>- <span class="l">zoneA</span><span class="w">
-</span><span class="w">            </span>- <span class="l">zoneB</span><span class="w">
-</span><span class="w">            </span>- <span class="l">zoneC</span><span class="w">
-</span><span class="w">    </span><span class="nt">podAntiAffinity</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span><span class="nt">cloud.netease.com.ncr/ncrnode</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379-2</span><span class="w">
-</span><span class="w">            </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
-</span><span class="w">            </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
-</span><span class="w">            </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
-</span><span class="w">        </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
-</span><span class="w">  </span><span class="nt">topologySpreadConstraints</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
-</span><span class="w">        </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
-</span><span class="w">        </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
-</span><span class="w">    </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span><span class="w">    </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
-</span><span class="w">    </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
-</span><span class="w">  </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
-</span><span class="w">        </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
-</span><span class="w">        </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
-</span><span class="w">        </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
-</span><span class="w">    </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
-</span><span class="w">    </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
-</span><span class="w">    </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
-</span></code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">affinity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">nodeAffinity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">nodeSelectorTerms</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">matchExpressions</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l">In</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">values</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="l">zoneA</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="l">zoneB</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="l">zoneC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">podAntiAffinity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">cloud.netease.com.ncr/ncrnode</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379-2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">topologySpreadConstraints</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">kubernetes.io/hostname</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">labelSelector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cloud.netease.com.ncr/type</span><span class="p">:</span><span class="w"> </span><span class="l">endpoints</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cloud.netease.com/app</span><span class="p">:</span><span class="w"> </span><span class="l">ncr</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cloud.netease.com/cluster-name</span><span class="p">:</span><span class="w"> </span><span class="l">rediscluster-3az-6379</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">maxSkew</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">topologyKey</span><span class="p">:</span><span class="w"> </span><span class="l">failure-domain.beta.kubernetes.io/zone</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">whenUnsatisfiable</span><span class="p">:</span><span class="w"> </span><span class="l">DoNotSchedule</span><span class="w">
+</span></span></span></code></pre></div></li>
 <li>
 <p>模拟调度死锁：假设<code>Pod0-1</code>调度到了<code>Node3</code>后，<code>Pod1-1</code>调度到了<code>Node-2</code>，这时<code>Pod2-1</code>将无法调度，因为根据同<code>Sts</code>内Zone维度的强制反亲和，它不能与<code>Pod2-0</code>调度到相同的Zone，即无法调度到<code>Node5</code>；根据同集群Node节点维度<code>maxSkew = 1</code>，它无法调度到除<code>Node5</code>外其他节点，如图所示：</p>
 <p><img
@@ -306,7 +306,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>
