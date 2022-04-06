@@ -12,10 +12,10 @@
     <description><![CDATA[分析K8s集群联邦机制的需求以及社区主流的解决方案。]]></description>
 </item><item>
     <title>ElasticSearch索引与架构原理分享</title>
-    <link>http://xjin.wang/resources/es-index-principle.pdf</link>
+    <link>http://xjin.wang/resources/es-lucene-share.pdf</link>
     <pubDate>Thu, 20 Jan 2022 11:04:02 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://xjin.wang/resources/es-index-principle.pdf</guid>
+    <guid>http://xjin.wang/resources/es-lucene-share.pdf</guid>
     <description><![CDATA[最近在部门内部做了一个关于ElasticSearch索引原理的分享，在此对PPT做个记录。]]></description>
 </item><item>
     <title>K8s Admission Webhook深入实践</title>
