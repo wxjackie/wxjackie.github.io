@@ -119,14 +119,14 @@
 <p>但是在容器化的场景中，经过一些场景验证，我发现这个配置可以帮我们简化很多之前管控处理的逻辑。</p>
 <p>下面列举一个场景：假设我们用一个<code>StatefulSet</code>部署一个3主3从的Redis Cluster，使编号为偶数的Pod（0,2,4）为master，编号为奇数的Pod（1,3,5）为slave</p>
 <p>集群组建完成后，对其中一个节点，这里选择1号Pod，发送<code>cluster nodes</code>，可以观察集群拓扑如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@proxy-cluster2-6379-0-1:/data# redis-cli cluster nodes
-</span></span><span class="line"><span class="cl">5d0161fb2ee7dabd5dacb50ad689b2f6a5b9fd9e 10.17.136.37:6379@16379 myself,slave c357283ab9f50917b2ae647603d05dca416a7018 <span class="m">0</span> <span class="m">1648798492000</span> <span class="m">1</span> connected
-</span></span><span class="line"><span class="cl">b3a9205ed85cbf11d84315ab182261fa95697b46 10.17.136.33:6379@16379 slave c11ed6cdc0f15954c6ec2f8db1f0bf53f5005f7c <span class="m">0</span> <span class="m">1648798493372</span> <span class="m">4</span> connected
-</span></span><span class="line"><span class="cl">c11ed6cdc0f15954c6ec2f8db1f0bf53f5005f7c 10.17.139.14:6379@16379 master - <span class="m">0</span> <span class="m">1648798491369</span> <span class="m">3</span> connected 0-5461
-</span></span><span class="line"><span class="cl">c357283ab9f50917b2ae647603d05dca416a7018 10.17.139.47:6379@16379 master - <span class="m">0</span> <span class="m">1648798492000</span> <span class="m">2</span> connected 10923-16383
-</span></span><span class="line"><span class="cl">bc41ca58cfd3dd2bc3c2dd622819b4df8787c879 10.17.139.59:6379@16379 master - <span class="m">0</span> <span class="m">1648798491000</span> <span class="m">5</span> connected 5462-10922
-</span></span><span class="line"><span class="cl">ab5ec582ae262ff55cbea3afa609736d5ff72737 10.17.180.20:6379@16379 slave bc41ca58cfd3dd2bc3c2dd622819b4df8787c879 <span class="m">0</span> <span class="m">1648798492370</span> <span class="m">6</span> connected
-</span></span></code></pre></div><p>这时我们保存该Pod（IP为<code>10.17.136.37</code>）的<code>nodes.conf</code>，即自动生成的集群拓扑配置文件，然后删掉该Pod。由于Sts的机制，这个Pod会被自动重建，观察到重建后1号Pod的IP变化为<code>10.17.135.30</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">root@proxy-cluster2-6379-0-1:/data# redis-cli cluster nodes
+5d0161fb2ee7dabd5dacb50ad689b2f6a5b9fd9e 10.17.136.37:6379@16379 myself,slave c357283ab9f50917b2ae647603d05dca416a7018 <span class="m">0</span> <span class="m">1648798492000</span> <span class="m">1</span> connected
+b3a9205ed85cbf11d84315ab182261fa95697b46 10.17.136.33:6379@16379 slave c11ed6cdc0f15954c6ec2f8db1f0bf53f5005f7c <span class="m">0</span> <span class="m">1648798493372</span> <span class="m">4</span> connected
+c11ed6cdc0f15954c6ec2f8db1f0bf53f5005f7c 10.17.139.14:6379@16379 master - <span class="m">0</span> <span class="m">1648798491369</span> <span class="m">3</span> connected 0-5461
+c357283ab9f50917b2ae647603d05dca416a7018 10.17.139.47:6379@16379 master - <span class="m">0</span> <span class="m">1648798492000</span> <span class="m">2</span> connected 10923-16383
+bc41ca58cfd3dd2bc3c2dd622819b4df8787c879 10.17.139.59:6379@16379 master - <span class="m">0</span> <span class="m">1648798491000</span> <span class="m">5</span> connected 5462-10922
+ab5ec582ae262ff55cbea3afa609736d5ff72737 10.17.180.20:6379@16379 slave bc41ca58cfd3dd2bc3c2dd622819b4df8787c879 <span class="m">0</span> <span class="m">1648798492370</span> <span class="m">6</span> connected
+</code></pre></div><p>这时我们保存该Pod（IP为<code>10.17.136.37</code>）的<code>nodes.conf</code>，即自动生成的集群拓扑配置文件，然后删掉该Pod。由于Sts的机制，这个Pod会被自动重建，观察到重建后1号Pod的IP变化为<code>10.17.135.30</code>。</p>
 <p>如果不使用<code>cluster-announce-ip</code>配置指明当前Pod地址，重新启动Redis进程时，直接使用之前残留的<code>nodes.conf</code>文件的话，会出现如下现象：</p>
 <p><img
         class="lazyload"
@@ -178,7 +178,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

@@ -192,26 +192,26 @@
         title="operator-structure" /></p>
 <p>Redis Operator自身采用Deployment进行三副本部署，通过ETCD选主。Redis Cluster每个分片内的两个Pod上的Redis实例为一主一从，每个分片由一个StatefulSet管理；Pod的调度策略由K8s原生调度器和网易轻舟K8s提供的扩展调度器共同保障，对于StatefulSet、Pod等原生资源对象的管理仍使用原生API。</p>
 <p>开始使用Redis Operator，首先我们需要提交一个属于Redis的资源定义（CRD），定义一个Redis集群所必要的规格描述（Specification），之后用户便可以提交CR（通常是以yaml文件的形式），并在CR的Spec中填写自己需要的规格信息后提交，剩下的工作，无论是<strong>创建、弹性扩缩容、故障处理</strong>，统统交给Redis Operator自动化调谐。下面是一个典型的CR实例：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">ncr.netease.com/v1alpha1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">NcrCluster	# 资源类型，在CRD中所定义</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster-redis</span><span class="w"> </span><span class="c"># CR名称</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">ns				# CR所在的namespace</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">availableZones:			# 可用区列表，支持单、多AZ</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">azName</span><span class="p">:</span><span class="w"> </span><span class="l">az1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">configFile</span><span class="p">:</span><span class="w"> </span><span class="l">ncr-cluster-configmap	# 默认的配置参数模板</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">master</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">													</span><span class="c"># 分片数</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">6379</span><span class="w">												</span><span class="c"># 端口号</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l">redis:4.0.14							# Redis引擎版本</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">resourceReqs:											# K8s标准资源规格描述</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">2Gi</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">4Gi</span><span class="w">
-</span></span></span></code></pre></div><p>下面简要分析一个Redis Cluster的CR提交后的Operator主干工作流程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">ncr.netease.com/v1alpha1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">NcrCluster	# 资源类型，在CRD中所定义</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">cluster-redis</span><span class="w"> </span><span class="c"># CR名称</span><span class="w">
+</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">ns				# CR所在的namespace</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="l">availableZones:			# 可用区列表，支持单、多AZ</span><span class="w">
+</span><span class="w">  </span>- <span class="nt">azName</span><span class="p">:</span><span class="w"> </span><span class="l">az1</span><span class="w">
+</span><span class="w">  </span><span class="nt">configFile</span><span class="p">:</span><span class="w"> </span><span class="l">ncr-cluster-configmap	# 默认的配置参数模板</span><span class="w">
+</span><span class="w">  </span><span class="nt">master</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">													</span><span class="c"># 分片数</span><span class="w">
+</span><span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">6379</span><span class="w">												</span><span class="c"># 端口号</span><span class="w">
+</span><span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l">redis:4.0.14							# Redis引擎版本</span><span class="w">
+</span><span class="w">  </span><span class="l">resourceReqs:											# K8s标准资源规格描述</span><span class="w">
+</span><span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">2Gi</span><span class="w">
+</span><span class="w">    </span><span class="nt">limits</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span><span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l">4Gi</span><span class="w">
+</span></code></pre></div><p>下面简要分析一个Redis Cluster的CR提交后的Operator主干工作流程：</p>
 <ol>
 <li>Redis Cluster对应的Informer感知到CR的Add事件。</li>
 <li>对该CR的Spec进行校验，包括是否符合CRD中的校验规则以及Operator内置的校验逻辑。</li>
@@ -291,7 +291,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.93.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Redis大规模应用最佳实践 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="Redis大规模应用最佳实践" />
+<meta property="og:description" content="介绍Redis在大规模应用时需要注意的事项和使用建议。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://xjin.wang/posts/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" /><meta property="og:image" content="http://xjin.wang/app-touch-icon.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-16T10:57:03+08:00" />
+<meta property="article:modified_time" content="2022-03-16T10:57:03+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://xjin.wang/app-touch-icon.png"/>
+
+<meta name="twitter:title" content="Redis大规模应用最佳实践"/>
+<meta name="twitter:description" content="介绍Redis在大规模应用时需要注意的事项和使用建议。"/>
+<meta name="application-name" content="XJin Blog">
+<meta name="apple-mobile-web-app-title" content="XJin Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/panda.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://xjin.wang/posts/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" /><link rel="prev" href="http://xjin.wang/posts/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Redis大规模应用最佳实践",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/xjin.wang\/posts\/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5\/"
+        },"genre": "posts","keywords": "Redis, 最佳实践","wordcount":  1348 ,
+        "url": "http:\/\/xjin.wang\/posts\/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5\/","datePublished": "2022-03-16T10:57:03+08:00","dateModified": "2022-03-16T10:57:03+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Author"},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Redis大规模应用最佳实践</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/"><i class="far fa-folder fa-fw"></i>中间件</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1348 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;3 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#架构选型">架构选型</a>
+      <ul>
+        <li><a href="#哨兵模式">哨兵模式</a></li>
+        <li><a href="#集群模式">集群模式</a></li>
+      </ul>
+    </li>
+    <li><a href="#内存管理">内存管理</a></li>
+    <li><a href="#性能">性能</a></li>
+    <li><a href="#容器化">容器化</a></li>
+    <li><a href="#运维与安全">运维与安全</a></li>
+    <li><a href="#巧用数据结构">巧用数据结构</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>自从工作以来，我个人一直专注于Redis相关的公有云、私有云、容器化开发，积累了不少经验，也踩过不少坑。这里根据近期组内的分享和个人经验来做个总结，希望能够通过一篇文章阐明Redis在大规模应用时的最佳实践。</p>
+</blockquote>
+<h2 id="架构选型">架构选型</h2>
+<p>下面简单介绍Redis常用的、原生的高可用架构模式：<strong>哨兵模式和集群模式</strong>。具体高可用机制的细节和非高可用的模式不在该部分的讨论范围内。</p>
+<h3 id="哨兵模式">哨兵模式</h3>
+<p>由一组Redis Sentinel管理若干组Redis主从实例，每组Redis主从在哨兵中体现为一个Group，当Master故障，Sentinel会做自动的故障主从切换，将同Group内其中一个可用的Slave提升成Master，满足了基本的高可用要求。基本架构如图所示：</p>
+<p>客户端访问哨兵模式Redis有两种方式，下面都以简单的Jedis客户端举例：</p>
+<ul>
+<li>使用Jedis类，需要Redis服务方提供出VIP的机制，保证VIP始终指向最新的Master（需要一个额外的管控服务去做这件事，因此对于哨兵模式仍建议使用JedisSentinel）</li>
+<li>使用JedisSentinel类，客户端配置Redis Sentinel的地址和对应的主从Group名称，即客户端通过Sentinel感知Redis主从，无需引入VIP。</li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/redis-best-practice/redis-sentinel-mode.png"
+        data-srcset="/img/redis-best-practice/redis-sentinel-mode.png, /img/redis-best-practice/redis-sentinel-mode.png 1.5x, /img/redis-best-practice/redis-sentinel-mode.png 2x"
+        data-sizes="auto"
+        alt="/img/redis-best-practice/redis-sentinel-mode.png"
+        title="redis-sentinel-mode" /></p>
+<p>通常，一组Redis Sentinel管理成百上千组Redis主从是没有问题的，但实际线上使用时，可以根据不同租户（如果是云服务商）、不同重要程度的Redis进行分组使用独立的Redis Sentinel组。哨兵模式的缺点是，它本质上还是一个单点结构，不是分布式的，无法支持水平扩展。下面介绍Redis 3.0后官方引入的分布式架构：Redis Cluster。</p>
+<h3 id="集群模式">集群模式</h3>
+<p><code>Redis Cluster</code>是自3.0版本后原生支持的集群化方案，也是目前建议线上使用的模式。</p>
+<p>分布式存储中需要提供维护节点元数据信息的机制，常见的元数据维护方式分为：集中式和P2P式，Redis采用的Gossip协议的原理就是节点彼此不断通信交换信息，一段时间后所有的节点都会知道集群完整信息，Redis Cluster中的Gossip除了交换槽信息，还交换主从状态/节点故障等，Redis Cluster的自动故障切换也是基于此实现的。如下图所示，Redis Cluster可以分为多个分片（一般最少3个），分片数是可以伸缩的，即支持水平扩展。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/redis-best-practice/redis-cluster-mode.png"
+        data-srcset="/img/redis-best-practice/redis-cluster-mode.png, /img/redis-best-practice/redis-cluster-mode.png 1.5x, /img/redis-best-practice/redis-cluster-mode.png 2x"
+        data-sizes="auto"
+        alt="/img/redis-best-practice/redis-cluster-mode.png"
+        title="redis-cluster-mode" /></p>
+<p>客户端访问Redis Cluster有两种方式，仍以Jedis举例：</p>
+<ul>
+<li>使用JedisCluster类：这个类是Jedis专为RedisCluster设计的Smart Client，使用时配置Redis Cluster中多个节点的地址信息，客户端会自动感知到整个Redis集群的拓扑，包括缓存槽分布，确定key和分片的映射关系。</li>
+<li>使用Jedis类：对于一些老的业务仍使用单点模式客户端（如Jedis），但由于容量问题Redis需要更换为Redis Cluster。这种情况需要为Redis Cluster前置Proxy + LoadBalance服务，便可以用单点的模式向外提供服务。社区中有多个可用的Proxy，比如Envoy也有Redis Cluster Filter，这里不再赘述。</li>
+</ul>
+<h2 id="内存管理">内存管理</h2>
+<h2 id="性能">性能</h2>
+<h2 id="容器化">容器化</h2>
+<h2 id="运维与安全">运维与安全</h2>
+<h2 id="巧用数据结构">巧用数据结构</h2>
+<ul>
+<li>geohash用于地理位置</li>
+<li>zset用于排行榜等</li>
+<li>bitmap</li>
+<li>布隆过滤器</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-03-16</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/redis/">Redis</a>,&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6/" class="prev" rel="prev" title="探索Kubernetes集群联邦方案"><i class="fas fa-angle-left fa-fw"></i>探索Kubernetes集群联邦方案</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript">window.config={"code":{"maxShownLines":20},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
