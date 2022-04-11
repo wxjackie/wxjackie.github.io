@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>运维 - Tag - XJin&#39;s Blog</title>
+        <link>http://xjin.wang/tags/%E8%BF%90%E7%BB%B4/</link>
+        <description>运维 - Tag - XJin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 19 Dec 2021 09:38:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/%E8%BF%90%E7%BB%B4/" rel="self" type="application/rss+xml" /><item>
+    <title>Redis全面排障指南</title>
+    <link>http://xjin.wang/posts/redis%E5%85%A8%E9%9D%A2%E6%8E%92%E9%9A%9C%E6%8C%87%E5%8D%97/</link>
+    <pubDate>Sun, 19 Dec 2021 09:38:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/posts/redis%E5%85%A8%E9%9D%A2%E6%8E%92%E9%9A%9C%E6%8C%87%E5%8D%97/</guid>
+    <description><![CDATA[根据过往经验，总结了一套Redis问题排查的思路图，希望能够帮助开发&amp;运维在碰到Redis问题对着一张图便可以找到问题根源。]]></description>
+</item></channel>
+</rss>
