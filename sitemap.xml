@@ -2,16 +2,18 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>http://xjin.wang/categories/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/posts/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/categories/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/tags/k8s/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/categories/k8s/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/posts/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/tags/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/tags/%E5%AE%B9%E5%99%A8/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/posts/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/tags/redis/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/posts/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/k8s/</loc><lastmod>2022-03-07T20:17:03&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/categories/k8s/</loc><lastmod>2022-03-07T20:17:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/posts/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6/</loc><lastmod>2022-03-07T20:17:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/</loc><lastmod>2022-03-07T20:17:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/resources/es-lucene-share.pdf</loc><lastmod>2022-01-20T11:04:02&#43;08:00</lastmod></url><url>

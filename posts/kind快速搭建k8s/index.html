@@ -107,8 +107,8 @@
 <p>Kind 使用容器来模拟每一个K8s节点，并在容器里面运行 <code>Systemd</code>。 容器里的 <code>Systemd</code> 托管了 <code>Kubelet</code> 和 <code>Containerd</code>，然后容器内部的 <code>Kubelet</code> 把其它K8s组件：<code>Kube-Apiserver</code>、<code>Etcd</code>、<code>CNI</code> 等等组件运行起来。</p>
 <p>Kind内部使用了 <code>Kubeadm</code> 这个工具来做集群的部署，包括高可用集群也是借助 <code>Kubeadm</code> 提供的特性来完成的。在高用集群下还会额外部署了一个 Nginx 来提供负载均衡 VIP。</p>
 <h2 id="kind安装与基本使用">Kind安装与基本使用</h2>
-<p>这里默认本机环境已经安装好了Docker，安装Docker的安装文档可直接参考官方文档：https://docs.docker.com/get-docker/</p>
-<p>如果要通过命令行与K8s进行交互，需要安装<code>kubectl</code>，安装方法可参考：https://kubernetes.io/docs/tasks/tools/#install-kubectl</p>
+<p>这里默认本机环境已经安装好了Docker，安装Docker的安装文档可直接参考官方文档：<a href="https://docs.docker.com/get-docker/" target="_blank" rel="noopener noreffer">https://docs.docker.com/get-docker/</a></p>
+<p>如果要通过命令行与K8s进行交互，需要安装<code>kubectl</code>，安装方法可参考：<a href="https://kubernetes.io/docs/tasks/tools/#install-kubectl" target="_blank" rel="noopener noreffer">https://kubernetes.io/docs/tasks/tools/#install-kubectl</a></p>
 <p>下面介绍在Linux环境下通过Kind二进制文件的安装方式，首先下载二进制并移动到PATH路径中</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
 chmod +x ./kind

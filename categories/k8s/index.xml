@@ -3,7 +3,14 @@
         <title>K8s - Category - XJin&#39;s Blog</title>
         <link>http://xjin.wang/categories/k8s/</link>
         <description>K8s - Category - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 07 Mar 2022 20:17:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/categories/k8s/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/categories/k8s/" rel="self" type="application/rss+xml" /><item>
+    <title>支持多架构的容器镜像构建指南</title>
+    <link>http://xjin.wang/posts/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</link>
+    <pubDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/posts/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</guid>
+    <description><![CDATA[介绍构建一个容器镜像，同时支持x86和arm架构平台的主流方案和原理。]]></description>
+</item><item>
     <title>探索Kubernetes集群联邦方案</title>
     <link>http://xjin.wang/posts/%E6%8E%A2%E7%B4%A2k8s%E9%9B%86%E7%BE%A4%E8%81%94%E9%82%A6/</link>
     <pubDate>Mon, 07 Mar 2022 20:17:03 &#43;0800</pubDate>
