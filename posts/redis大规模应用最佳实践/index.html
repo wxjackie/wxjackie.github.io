@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5\/"
-        },"genre": "posts","keywords": "Redis, 最佳实践","wordcount":  6968 ,
+        },"genre": "posts","keywords": "Redis, 最佳实践","wordcount":  7959 ,
         "url": "http:\/\/xjin.wang\/posts\/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5\/","datePublished": "2022-03-16T10:57:03+08:00","dateModified": "2022-03-16T10:57:03+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -77,8 +77,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Redis大规模应用最佳实践</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/"><i class="far fa-folder fa-fw"></i>中间件</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;6968 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;14 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;7959 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;16 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -125,6 +125,7 @@
         <li><a href="#双写一致性">双写一致性</a></li>
         <li><a href="#分布式锁">分布式锁</a></li>
         <li><a href="#巧用数据结构">巧用数据结构</a></li>
+        <li><a href="#避免缓存击穿穿透">避免缓存击穿、穿透</a></li>
       </ul>
     </li>
   </ul>
@@ -316,8 +317,32 @@ auto-aof-rewrite-min-size 256mb
 <p>详细信息可以跳转我们的官网了解：<a href="https://sf.163.com/product/paas" target="_blank" rel="noopener noreffer">网易数帆-轻舟中间件</a></p>
 <h2 id="6-业务侧">6. 业务侧</h2>
 <h3 id="双写一致性">双写一致性</h3>
+<p>业务上使用Redis都会需要考虑，如何保证数据库和缓存中的一致性的问题。最简单常用的方式就是Cache Aside模式，下面简要介绍下这种模式的读写流程。</p>
+<p>读请求流程：</p>
+<ol>
+<li>如果命中缓存，直接返回缓存数据，请求结束</li>
+<li>如果未命中缓存，从数据库读取数据，并将读到的数据写入缓存，然后返回。</li>
+</ol>
+<p>写请求流程：先更新数据库，然后删除缓存中的对应数据。</p>
+<p>这个模式的好处是，业务侧对于缓存只有<code>SET</code>和<code>DELETE</code>两种抽象操作，它们都是幂等的操作（UPDATE就是典型的非幂等），避免缓存到数据库中间的链路出现并发不一致问题。</p>
+<p>Cache Aside模式还要考虑DELETE失败的问题，本质上这还是非原子操作的事务问题，要想彻底解决还是需要引入分布式锁或分布式事务的解决方案，比如<strong>RedLock、引入队列异步淘汰</strong>，甚至根据业务评估。这些问题也可能都不存在，一致性程度和性能之间的权衡，完全应由业务评估决定。</p>
 <h3 id="分布式锁">分布式锁</h3>
-<p>列举几种不同程度要求的使用，从setex到redlock</p>
+<p>关于Redis分布式锁的解决方案很多，下面介绍两个方案</p>
+<p>方案一：<code>SET lock_key $unique_id EX $expire_time NX</code></p>
+<ul>
+<li><code>$unique_id</code>指当前线程的UID，<code>$expire_time</code>为锁过期时间，可以单独开启一个守护线程对锁进行过期检查和自动续期。（如果有可重入锁的需求，可以将值换成整数，使用INCR命令）</li>
+<li>为了让检查时释放锁的GET和DELETE为原子操作，可以通过Lua脚本实现。</li>
+</ul>
+<p>方案二：红锁（RedLock）具体可参考：<a href="https://redis.io/docs/reference/patterns/distributed-locks/" target="_blank" rel="noopener noreffer">Distributed Locks with Redis</a></p>
+<p>红锁需要多个独立的Redis实例，因为单个Redis是有丢失数据导致锁失效（Redis主从切换本身也会丢失数据），下面以5个Redis实例组成的红锁对主要操作进行简单说明：</p>
+<ol>
+<li>释放锁：Lua 脚本，先 GET 判断锁是否归属自己，再 DEL 释放锁</li>
+<li>客户端依次向这 5 个 Redis 实例发起加锁请求（用方案一讲到的 SET 命令），且每个请求会设置超时时间（毫秒级，要远小于锁的有效时间），如果某一个实例加锁失败（包括网络超时、锁被其它人持有等各种异常情况），就立即向下一个 Redis 实例申请加锁</li>
+<li>如果客户端从 &gt;=3 个（大多数）以上 Redis 实例加锁成功，则再次获取「当前时间戳T2」，如果 T2 - T1 &lt; 锁的过期时间，此时，认为客户端加锁成功，否则认为加锁失败</li>
+<li>加锁成功，去操作共享资源（例如修改 MySQL 某一行，或发起一个 API 请求）</li>
+<li>加锁失败，向「全部节点」发起释放锁请求（前面讲到的 Lua 脚本释放锁）</li>
+</ol>
+<p>一般的场景下，个人认为方案一就足够了，红锁的实施成本很高。如果有对于性能要求不高、强一致性的锁需求，可以考虑使用Zookeeper。</p>
 <h3 id="巧用数据结构">巧用数据结构</h3>
 <ul>
 <li>geohash用于地理位置</li>
@@ -325,6 +350,7 @@ auto-aof-rewrite-min-size 256mb
 <li>bitmap</li>
 <li>布隆过滤器</li>
 </ul>
+<h3 id="避免缓存击穿穿透">避免缓存击穿、穿透</h3>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
