@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97\/"
-        },"genre": "posts","keywords": "K8s, 容器","wordcount":  2205 ,
+        },"genre": "posts","keywords": "K8s, 容器","wordcount":  2206 ,
         "url": "http:\/\/xjin.wang\/posts\/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97\/","datePublished": "2022-04-12T19:53:11+08:00","dateModified": "2022-04-12T19:53:11+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -41,7 +41,7 @@
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
@@ -54,7 +54,7 @@
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin&#39;s Blog</a>
+                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -77,7 +77,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">支持多架构的容器镜像构建指南</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/k8s/"><i class="far fa-folder fa-fw"></i>K8s</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-12">2022-04-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2205 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-12">2022-04-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2206 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -257,7 +257,7 @@ docker push xjin/web-service:multi-arch
 </span><span class="err"></span><span class="c"># Expose ports.</span><span class="err">
 </span><span class="err"></span><span class="k">EXPOSE</span><span class="s"> 6379</span><span class="err">
 </span></code></pre></div><p>构建并推送：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">docker buildx build -t xjin/redis:6.2.6-multi-arch --platform<span class="o">=</span>linux/arm64,linux/amd64 . --push
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">docker buildx build -t xjin/redis:6.2.6-multi-arch --platform linux/arm64,linux/amd64 . --push
 </code></pre></div><p>需要注意的是：</p>
 <ul>
 <li>C编写的服务一定要基于多架构基础镜像重新编译，直接使用二进制包很多情况下会出问题。</li>
@@ -310,5 +310,5 @@ docker push xjin/web-service:multi-arch
             </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
                 <i class="fas fa-comment fa-fw"></i>
             </a>
-        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript">window.config={"code":{"maxShownLines":20},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript">window.config={"code":{"maxShownLines":25},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

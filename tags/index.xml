@@ -46,6 +46,13 @@
     <guid>http://xjin.wang/tags/%E8%BF%90%E7%BB%B4/</guid>
     <description><![CDATA[]]></description>
 </item><item>
+    <title>测试</title>
+    <link>http://xjin.wang/tags/%E6%B5%8B%E8%AF%95/</link>
+    <pubDate>Thu, 08 Jul 2021 11:57:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/tags/%E6%B5%8B%E8%AF%95/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>云原生</title>
     <link>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
     <pubDate>Tue, 30 Mar 2021 19:53:16 &#43;0800</pubDate>
@@ -65,13 +72,6 @@
     <pubDate>Sun, 27 Oct 2019 11:17:30 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://xjin.wang/tags/java/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>JSON</title>
-    <link>http://xjin.wang/tags/json/</link>
-    <pubDate>Sun, 27 Oct 2019 11:17:30 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://xjin.wang/tags/json/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>
