@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>CPU缓存和伪共享对Golang的影响 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="CPU缓存和伪共享对Golang的影响" />
+<meta property="og:description" content="站在CPU高速缓存的角度，分析Cache伪共享在Golang执行效率上的影响。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://xjin.wang/posts/cpu%E7%BC%93%E5%AD%98%E5%92%8C%E4%BC%AA%E5%85%B1%E4%BA%AB%E5%AF%B9golang%E7%9A%84%E5%BD%B1%E5%93%8D/" /><meta property="og:image" content="http://xjin.wang/app-touch-icon.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-08-26T16:44:03+08:00" />
+<meta property="article:modified_time" content="2021-08-26T16:44:03+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://xjin.wang/app-touch-icon.png"/>
+
+<meta name="twitter:title" content="CPU缓存和伪共享对Golang的影响"/>
+<meta name="twitter:description" content="站在CPU高速缓存的角度，分析Cache伪共享在Golang执行效率上的影响。"/>
+<meta name="application-name" content="XJin Blog">
+<meta name="apple-mobile-web-app-title" content="XJin Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/panda.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://xjin.wang/posts/cpu%E7%BC%93%E5%AD%98%E5%92%8C%E4%BC%AA%E5%85%B1%E4%BA%AB%E5%AF%B9golang%E7%9A%84%E5%BD%B1%E5%93%8D/" /><link rel="prev" href="http://xjin.wang/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" /><link rel="next" href="http://xjin.wang/posts/k8s-webhook/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "CPU缓存和伪共享对Golang的影响",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/xjin.wang\/posts\/cpu%E7%BC%93%E5%AD%98%E5%92%8C%E4%BC%AA%E5%85%B1%E4%BA%AB%E5%AF%B9golang%E7%9A%84%E5%BD%B1%E5%93%8D\/"
+        },"genre": "posts","keywords": "Golang, 底层原理","wordcount":  2283 ,
+        "url": "http:\/\/xjin.wang\/posts\/cpu%E7%BC%93%E5%AD%98%E5%92%8C%E4%BC%AA%E5%85%B1%E4%BA%AB%E5%AF%B9golang%E7%9A%84%E5%BD%B1%E5%93%8D\/","datePublished": "2021-08-26T16:44:03+08:00","dateModified": "2021-08-26T16:44:03+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Author"},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">CPU缓存和伪共享对Golang的影响</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>Golang</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-08-26">2021-08-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2283 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#基础知识">基础知识</a>
+      <ul>
+        <li><a href="#cpu缓存体系">CPU缓存体系</a></li>
+        <li><a href="#cpu缓存一致性协议-mesi">CPU缓存一致性协议-MESI</a></li>
+        <li><a href="#什么是伪共享">什么是伪共享</a></li>
+      </ul>
+    </li>
+    <li><a href="#规避伪共享">规避伪共享</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>最近在读文章时发现了一些有趣的底层原理，虽然看似与日常工作没有关联，但还是要知其然知其所以然，在这里简要自行做个笔记和分析。</p>
+<p>现代典型的 CPU 有三级缓存，距离核心越近，速度越快，空间越小。正如内存访问速度远高于磁盘一样，高速缓存访问速度远高于内存。内存一次读写大概需要200个CPU周期(CPU cycles)，而高速缓存一般般情况下只需1个CPU周期。多核处理器（SMP）系统中， 每一个处理器都有一个本地高速缓存。内存系统必须保证高速缓存的一致性。当不同处理器上的线程修改驻留在同一高速缓存中的变量时就会发生假共享(false sharing)，结果就会导致高速缓存无效，并强制更新，进而影响系统性能。</p>
+</blockquote>
+<h2 id="基础知识">基础知识</h2>
+<h3 id="cpu缓存体系">CPU缓存体系</h3>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/golang-cpu-cache/cpu-cache-layer.png"
+        data-srcset="/img/golang-cpu-cache/cpu-cache-layer.png, /img/golang-cpu-cache/cpu-cache-layer.png 1.5x, /img/golang-cpu-cache/cpu-cache-layer.png 2x"
+        data-sizes="auto"
+        alt="/img/golang-cpu-cache/cpu-cache-layer.png"
+        title="cpu-cache-layer" /></p>
+<p>目前最常见的架构是把 L1 和 L2 缓存内嵌在 CPU 核心本地，而把 L3 缓存设计成跨核心共享。越靠近CPU核心的缓存，其容量越小，但是访问延迟越低，比如L1 一般 32k，L2 一般 256k，L3 一般12M。</p>
+<p>缓存是由缓存行（Cache Line）组成的，在64位的CPU中典型的一行是64字节。CPU存取缓存都是按行为最小单位操作的。一个Java long型占8字节，所以从一条缓存行上可以获取到8个long型变量。所以如果访问一个long型数组，当有一个long被加载到cache中，将会无消耗地加载了另外7个，所以可以非常快地遍历数组。</p>
+<h3 id="cpu缓存一致性协议-mesi">CPU缓存一致性协议-MESI</h3>
+<p>所有高速缓存与内存，高速缓存之间的数据传输都发生在一条共享的数据总线（Memory controller）上，所有的CPU都能看到这条总线。最简明的缓存一致性思想可以简单阐述为：只要在多核共享缓存行上有数据修改操作，就通知所有的CPU核更新缓存，或者放弃缓存，等待下次访问的时候再重新从内存中读取。</p>
+<p>当今大多数Intel处理器使用的缓存一致性协议称为<code>MESI</code>，这样命名以表示特定缓存行所处的四种状态：已修改、独占、共享和无效。</p>
+<ul>
+<li>Modified（被修改）：处于这一状态的数据只在本核处理器中有缓存，且其数据已被修改，但还没有更新到内存中。</li>
+<li>Exclusive（独占）：处于这一状态的数据只在本核处理器中有缓存，且其数据没有被修改，与内存一致。</li>
+<li>Shared（共享）：处于这一状态的数据在多核处理器中都有缓存</li>
+<li>Invalid（无效）：本CPU中的这份缓存已经无效了，不能使用</li>
+</ul>
+<p>下面介绍一下缓存行在不同场景下的状态变化：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/golang-cpu-cache/false-share-example.png"
+        data-srcset="/img/golang-cpu-cache/false-share-example.png, /img/golang-cpu-cache/false-share-example.png 1.5x, /img/golang-cpu-cache/false-share-example.png 2x"
+        data-sizes="auto"
+        alt="/img/golang-cpu-cache/false-share-example.png"
+        title="false-share-example" /></p>
+<ul>
+<li>一开始时，缓存行<code>Line1</code>没有加载任何数据，所以它处于<code>I</code>状态。数据A和B在内存中位于同一缓存行上。</li>
+<li><code>CPU-1</code>读取数据A，加载到缓存行<code>Line1</code>（数据B也被一并加载到该缓存行），<code>Line1</code>被标记为<code>Exclusive</code></li>
+<li><code>CPU-2</code>读取数据B，加载到缓存行<code>Line2</code>（其实和CPU-1的<code>Line1</code>是同一份数据），由于<code>CPU-1</code>已经存在了当前数据的缓存行，这两个缓存行被标记为<code>Shared</code>状态</li>
+<li><code>CPU-1</code>要修改数据A，此时发现<code>Line1</code>的状态还是<code>Shared</code>，于是它会先通过总线发送消息给<code>CPU-2</code>，通知其将对应的缓存行<code>Line2</code>标记为<code>Invalid</code>，然后再修改数据A，同时将<code>Line1</code>标记为<code>Modified</code></li>
+<li>这时，<code>CPU-2</code>要修改数据B，这时发现<code>CPU-2</code>中的<code>Line2</code>已经处于<code>Invalid</code>状态，且<code>CPU-1</code>中的对应缓存行<code>Line1</code>处于<code>Modified</code>状态。这时<code>CPU-2</code>将会通过总线通知<code>CPU-1</code>将<code>Line1</code>的数据写回内存，然后<code>CPU-2</code>再从内存读取对应缓存行到本地缓存行，再去修改数据B，最后通知<code>CPU-1</code>将对应缓存行设置为<code>Invalid</code>。</li>
+</ul>
+<h3 id="什么是伪共享">什么是伪共享</h3>
+<p>如果上述MESI协议状态变化解读中的最后两个步骤交替发生，就会一直需要访问主存，性能会比访问高速缓存差很多。数据A和B因为归属于一个缓存行 ，这个缓存行中的任意数据被修改后，它们都会相互影响。</p>
+<p>因此，当不同CPU上的线程修改驻留在同一高速缓存行（Cache Block，或Cache Line）中的变量时就会发生<strong>伪共享</strong>。 这种现象之所以被称为伪共享，是因为每个线程并非真正共享相同变量的访问权。 访问同一变量或真正共享要求<strong>编程式同步</strong>结构，以确保有序的数据访问。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/golang-cpu-cache/cpu-false-shareing.png"
+        data-srcset="/img/golang-cpu-cache/cpu-false-shareing.png, /img/golang-cpu-cache/cpu-false-shareing.png 1.5x, /img/golang-cpu-cache/cpu-false-shareing.png 2x"
+        data-sizes="auto"
+        alt="/img/golang-cpu-cache/cpu-false-shareing.png"
+        title="img" /></p>
+<h2 id="规避伪共享">规避伪共享</h2>
+<p>避免伪共享的办法就是<strong>内存填充（Padding）</strong>，可以简单地理解为在两个变量之间填充一定的空间，避免两个变量出现在同一个缓存行内。</p>
+<p>下面做个简单的实验，验证下内存填充前后的差异，代码示例如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">test</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;sync&#34;</span>
+	<span class="s">&#34;testing&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">M</span> <span class="p">=</span> <span class="mi">1000000</span>
+<span class="kd">const</span> <span class="nx">CacheLinePadSize</span> <span class="p">=</span> <span class="mi">64</span>
+
+<span class="kd">type</span> <span class="nx">SimpleStruct</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">n</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">PaddedStruct</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">n</span> <span class="kt">int</span>
+	<span class="nx">_</span> <span class="nx">CacheLinePad</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">CacheLinePad</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">_</span> <span class="p">[</span><span class="nx">CacheLinePadSize</span><span class="p">]</span><span class="kt">byte</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">BenchmarkStructureFalseSharing</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">structA</span> <span class="o">:=</span> <span class="nx">SimpleStruct</span><span class="p">{}</span>
+	<span class="nx">structB</span> <span class="o">:=</span> <span class="nx">SimpleStruct</span><span class="p">{}</span>
+	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+
+	<span class="nx">b</span><span class="p">.</span><span class="nf">ResetTimer</span><span class="p">()</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nx">M</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+				<span class="nx">structA</span><span class="p">.</span><span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="p">}</span>
+			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+		<span class="p">}()</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nx">M</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+				<span class="nx">structB</span><span class="p">.</span><span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="p">}</span>
+			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+		<span class="p">}()</span>
+		<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">BenchmarkStructurePadding</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">structA</span> <span class="o">:=</span> <span class="nx">PaddedStruct</span><span class="p">{}</span>
+	<span class="nx">structB</span> <span class="o">:=</span> <span class="nx">SimpleStruct</span><span class="p">{}</span>
+	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+
+	<span class="nx">b</span><span class="p">.</span><span class="nf">ResetTimer</span><span class="p">()</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nx">M</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+				<span class="nx">structA</span><span class="p">.</span><span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="p">}</span>
+			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+		<span class="p">}()</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nx">M</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+				<span class="nx">structB</span><span class="p">.</span><span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="p">}</span>
+			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+		<span class="p">}()</span>
+		<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div><p>测试结果</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ go <span class="nb">test</span> -gcflags <span class="s2">&#34;-N -l&#34;</span> -bench .
+goos: linux
+goarch: amd64
+BenchmarkStructureFalseSharing-2   	     186	   <span class="m">6050044</span> ns/op
+BenchmarkStructurePadding-2        	     417	   <span class="m">2924104</span> ns/op
+PASS
+</code></pre></div><p>可以看出，在amd64平台上测试，内存填充的优化是非常明显的，运行速度直接翻倍。但是这是一种空间换时间的做法，一般的场景很难需要这种机制的面向CPU执行效率的优化。</p>
+<h2 id="总结">总结</h2>
+<p>虽然一些底层原理看起来与日常工作的联系并不紧密，但是理解底层硬件应该会让我们成为更好的开发人员。推而广之，对于底层原理的深入理解，会为我们应用真正调优、重构、设计等攻坚工作起到关键作用，下面摘录Medium原文的一段话：</p>
+<p>机械同理心（Mechanical sympathy）是软件开发领域的一个重要概念，其源自三届世界冠军 F1赛车手 Jackie Stewart 的一句名言：</p>
+<p><em>You don’t have to be an engineer to be a racing driver, but you do have to have Mechanical Sympathy. （要想成为一名赛车手，你不必成为一名工程师，但你必须有机械同理心。）</em></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://www.xwxwgo.com/post/2019/07/09/golang%E5%92%8Cfalse-sharing/" target="_blank" rel="noopener noreffer">https://www.xwxwgo.com/post/2019/07/09/golang%E5%92%8Cfalse-sharing/</a></li>
+<li><a href="https://teivah.medium.com/go-and-cpu-caches-af5d32cc5592" target="_blank" rel="noopener noreffer">https://teivah.medium.com/go-and-cpu-caches-af5d32cc5592</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/343561193" target="_blank" rel="noopener noreffer">https://zhuanlan.zhihu.com/p/343561193</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-08-26</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">Golang</a>,&nbsp;<a href="/tags/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">底层原理</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/" class="prev" rel="prev" title="K8s拓扑分布约束实现Redis高可用调度的方案设计"><i class="fas fa-angle-left fa-fw"></i>K8s拓扑分布约束实现Redis高可用调度的方案设计</a>
+            <a href="/posts/k8s-webhook/" class="next" rel="next" title="K8s Admission Webhook深入实践">K8s Admission Webhook深入实践<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript">window.config={"code":{"maxShownLines":200},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

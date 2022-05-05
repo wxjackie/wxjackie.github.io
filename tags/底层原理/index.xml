@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>底层原理 - Tag - XJin&#39;s Blog</title>
+        <link>http://xjin.wang/tags/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</link>
+        <description>底层原理 - Tag - XJin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 26 Aug 2021 16:44:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/" rel="self" type="application/rss+xml" /><item>
+    <title>CPU缓存和伪共享对Golang的影响</title>
+    <link>http://xjin.wang/posts/cpu%E7%BC%93%E5%AD%98%E5%92%8C%E4%BC%AA%E5%85%B1%E4%BA%AB%E5%AF%B9golang%E7%9A%84%E5%BD%B1%E5%93%8D/</link>
+    <pubDate>Thu, 26 Aug 2021 16:44:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/posts/cpu%E7%BC%93%E5%AD%98%E5%92%8C%E4%BC%AA%E5%85%B1%E4%BA%AB%E5%AF%B9golang%E7%9A%84%E5%BD%B1%E5%93%8D/</guid>
+    <description><![CDATA[站在CPU高速缓存的角度，分析Cache伪共享在Golang执行效率上的影响。]]></description>
+</item></channel>
+</rss>
