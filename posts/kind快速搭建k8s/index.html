@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s\/"
-        },"genre": "posts","keywords": "K8s","wordcount":  1670 ,
+        },"genre": "posts","keywords": "K8s","wordcount":  1732 ,
         "url": "http:\/\/xjin.wang\/posts\/kind%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAk8s\/","datePublished": "2021-01-21T16:24:10+08:00","dateModified": "2021-01-21T16:24:10+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -77,7 +77,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">使用Kind快速模拟多节点K8s环境</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/k8s/"><i class="far fa-folder fa-fw"></i>K8s</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-21">2021-01-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1670 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-21">2021-01-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1732 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -141,14 +141,27 @@ kubectl cluster-info
 </span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
 </span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
 </span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
-</span><span class="w">	</span><span class="c"># 可以在此单独指定镜像版本，也可以在创建命令中指定版本。</span><span class="w">
+</span><span class="w">	</span><span class="c"># 可以在此单独指定镜像版本</span><span class="w">
 </span><span class="w">	</span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
 </span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
 </span><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
 </span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
 </span><span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">kindest/node:v1.16.4@sha256:b91a2c2317a000f3a783489dfb755064177dbc3a0b2f4147d50f04825d016f55</span><span class="w">
+</span></code></pre></div><p>执行命令创建集群即可：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind create cluster --config kind-cluster.yaml
+</code></pre></div><p>也可以不在配置YAML里面写镜像，通过命令指定版本，集群YAML如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># a cluster with 3 control-plane nodes and 3 workers</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Cluster</span><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">kind.x-k8s.io/v1alpha4</span><span class="w">
+</span><span class="w"></span><span class="nt">nodes</span><span class="p">:</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">control-plane</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
+</span><span class="w"></span>- <span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l">worker</span><span class="w">
 </span></code></pre></div><p>然后使用上述配置文件创建Kind集群</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind create cluster --config kind-cluster.yaml --image kindest/node:v1.20.0
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind create cluster --config kind-cluster.yaml --image kindest/node:v1.21.10
 </code></pre></div><p>创建完成后，使用<code>kubectl get no</code>就可以看到多节点K8s集群了。</p>
 <p>实际使用时我们要需要把本地的Docker镜像导入到模拟的K8s集群中，命令如下</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind load docker-image my-custom-image-0 my-custom-image-1
