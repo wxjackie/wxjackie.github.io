@@ -1,9 +1,16 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Categories - Category - XJin&#39;s Blog</title>
+        <title>Categories - Category - Jereo&#39;s Blog</title>
         <link>http://xjin.wang/categories/</link>
-        <description>Categories - Category - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/categories/" rel="self" type="application/rss+xml" /><item>
+        <description>Categories - Category - Jereo&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>Linux</title>
+    <link>http://xjin.wang/categories/linux/</link>
+    <pubDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/categories/linux/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>K8s</title>
     <link>http://xjin.wang/categories/k8s/</link>
     <pubDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</pubDate>

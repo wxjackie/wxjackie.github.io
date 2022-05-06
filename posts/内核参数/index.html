@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>常用的Linux内核参数及优化场景 - Jereo&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="常用的Linux内核参数及优化场景" />
+<meta property="og:description" content="根据工作中遇到的内核参数调优，阐述一些常用于调优的Linux内核参数及其使用场景。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://xjin.wang/posts/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0/" /><meta property="og:image" content="http://xjin.wang/app-touch-icon.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-21T20:17:03+08:00" />
+<meta property="article:modified_time" content="2022-04-21T20:17:03+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://xjin.wang/app-touch-icon.png"/>
+
+<meta name="twitter:title" content="常用的Linux内核参数及优化场景"/>
+<meta name="twitter:description" content="根据工作中遇到的内核参数调优，阐述一些常用于调优的Linux内核参数及其使用场景。"/>
+<meta name="application-name" content="XJin Blog">
+<meta name="apple-mobile-web-app-title" content="XJin Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/panda.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://xjin.wang/posts/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0/" /><link rel="prev" href="http://xjin.wang/posts/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "常用的Linux内核参数及优化场景",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/xjin.wang\/posts\/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0\/"
+        },"genre": "posts","keywords": "性能优化, Linux","wordcount":  2011 ,
+        "url": "http:\/\/xjin.wang\/posts\/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0\/","datePublished": "2022-04-21T20:17:03+08:00","dateModified": "2022-04-21T20:17:03+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Author"},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : '' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Jereo&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Jereo&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">常用的Linux内核参数及优化场景</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-21">2022-04-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2011 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#网络层面">网络层面</a>
+      <ul>
+        <li><a href="#netcoresomaxconn">net.core.somaxconn</a></li>
+        <li><a href="#netnetfilter">net.netfilter</a></li>
+      </ul>
+    </li>
+    <li><a href="#存储层面">存储层面</a>
+      <ul>
+        <li><a href="#vmovercommit_memory">vm.overcommit_memory</a></li>
+        <li><a href="#syskernelmmtransparent_hugepageenabled">/sys/kernel/mm/transparent_hugepage/enabled</a></li>
+        <li><a href="#vmswappiness">vm.swappiness</a></li>
+      </ul>
+    </li>
+    <li><a href="#其他">其他</a>
+      <ul>
+        <li><a href="#ulimit--c-unlimited">ulimit -c unlimited</a></li>
+        <li><a href="#ulimit--n-65535">ulimit -n 65535</a></li>
+        <li><a href="#kernelcore_uses_pid">kernel.core_uses_pid</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>在Linux中，<code>sysctl</code>命令被用于在内核运行时动态地修改内核的运行参数，可用的内核参数在目录<code>/proc/sys</code>中。需要注意的是，sysctl命令对内核参数的修改，在系统重启后会丢失，如果希望参数持久化，可以直接修改配置文件<code>/etc/sysctl.conf</code></p>
+<p>下面根据工作中遇到的内核参数调优，阐述一些常用于调优的内核参数及其使用场景。</p>
+</blockquote>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/img/golang-cpu-cache/linux-kernel.jpg"
+        data-srcset="/img/golang-cpu-cache/linux-kernel.jpg, /img/golang-cpu-cache/linux-kernel.jpg 1.5x, /img/golang-cpu-cache/linux-kernel.jpg 2x"
+        data-sizes="auto"
+        alt="/img/golang-cpu-cache/linux-kernel.jpg"
+        title="Linux-core" /></p>
+<h2 id="网络层面">网络层面</h2>
+<h3 id="netcoresomaxconn">net.core.somaxconn</h3>
+<p><code>net.core.somaxconn</code>表示<strong>Socket的监听队列（backlog）长度上限</strong>，当一个请求尚未被处理或者建立时，它就会进入监听队列。Socket Server会从backlog中获取请求进行处理，处理后的请求不再位于backlog中，当Server处理较慢时、或者并发请求较多时，backlog被填满后，传入的新请求就会被直接拒绝。</p>
+<p>目前在Redis容器化中，我们在Redis容器中设置<code>net.core.somaxconn = 2048</code>，因为Redis的<code>tcp-backlog</code>参数必须小于该内核参数，我们要预留足够的热配置空间。</p>
+<h3 id="netnetfilter">net.netfilter</h3>
+<p><strong>TODO</strong></p>
+<h2 id="存储层面">存储层面</h2>
+<h3 id="vmovercommit_memory">vm.overcommit_memory</h3>
+<p>Memory overcommit的含义是操作系统承诺给进程的内存大小超过了实际可用的内存。比如某个进程malloc()了200MB内存，但实际上只用到了100MB，按照UNIX/Linux的算法，物理内存页的分配发生在使用的瞬间，而不是在申请的瞬间，也就是说如果不允许overcommit，未用到的100MB内存根本就没有分配，这100MB内存就闲置了。</p>
+<p>commit(或overcommit)针对的是内存申请，内存申请不等于内存分配，内存只在实际用到的时候才分配。</p>
+<p><code>vm.overcommit_memory</code>接受三种取值：</p>
+<ul>
+<li>0：表示内核将检查是否有足够的可用内存供应用进程使用（使用一定的算法）；如果有足够的可用内存，内存申请允许；否则，内存申请失败，并把错误返回给应用进程。</li>
+<li>1：表示内核允许分配所有的物理内存，而不管当前的内存状态如何。</li>
+<li>2：当系统分配的内存超过<code>swap+N%物理RAM</code>时，会拒绝commit。 其中(N%由<code>vm.overcommit_ratio</code>这一内核参数决定)</li>
+</ul>
+<p>设置<code>vm.overcommit_memory = 1</code>是Redis常见的内核参数优化。Redis在执行<code>BGSAVE</code>生成RDB时，会fork出一个子进程，与父进程占用相同的内存。如果<code>vm.overcommit_memory</code>设置为0，会导致子进程申请内存失败，无法执行。该参数也会体现在Redis的日志Warning中。</p>
+<h3 id="syskernelmmtransparent_hugepageenabled">/sys/kernel/mm/transparent_hugepage/enabled</h3>
+<p>内核启用了透明大页，可能导致出现Redis延迟升高和异常内存使用的现象，这个也会体现在Redis的日志Warning中。可以使用如下命令关闭透明大页：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> never &gt; /sys/kernel/mm/transparent_hugepage/enabled
+</code></pre></div><p>关于透明大页对Redis性能影响的具体原理，可以参考我的这篇文章中的对应部分：<a href="https://xjin.wang/posts/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/#%E5%85%B3%E9%97%AD%E9%80%8F%E6%98%8E%E5%A4%A7%E9%A1%B5swap" target="_blank" rel="noopener noreffer">Redis大规模应用最佳实践#关闭透明大页</a></p>
+<h3 id="vmswappiness">vm.swappiness</h3>
+<p>该参数定义内核使用<code>swap</code>的积极程度，对应文件<code>/proc/sys/vm/swappiness</code>，默认值是60，可以的取值范围是0-100。</p>
+<p>不同的取值情况举例：</p>
+<ul>
+<li>0： 仅在物理内存不足的情况下，一般是当剩余空闲内存低于vm.min_free_kbytes limit时，使用交换空间（基本上等同于禁止Swap）</li>
+<li>1： 内核版本3.5及以上、Red Hat内核版本2.6.32-303及以上，进行最少量的交换，而不禁用交换。</li>
+<li>10：对于一般的应用，当系统存在足够内存时，推荐设置为该值以中和性能和稳定性。</li>
+<li>100： 内核将积极的使用交换空间。</li>
+</ul>
+<p>对于Redis是需要禁用Swap的，否则在内存水位高时，会出现严重的性能问题。</p>
+<h2 id="其他">其他</h2>
+<h3 id="ulimit--c-unlimited">ulimit -c unlimited</h3>
+<p><code>ulimit</code> 是 shell 的内置命令。在执行<code>ulimit</code>命令时，其实是 shell 自身调用。默认情况下，Linux在程序异常时不产生core文件，要想让程序异常退出时产生<code>core dump</code>文件，需要使用<strong>ulimit</strong>命令更改coredump的设置：表示在程序异常时产生core dump文件，并且不对core dump文件的大小进行限制。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">ulimit</span> -c unlimited 
+</code></pre></div><h3 id="ulimit--n-65535">ulimit -n 65535</h3>
+<p>指定同一时间最多可开启的文件数。如果一个进程已经启动，再去这样调整<code>ulimit</code>是无效的，可以考虑修改<code>/proc/{pid}/limits</code>来实现动态修改。</p>
+<h3 id="kernelcore_uses_pid">kernel.core_uses_pid</h3>
+<p>在程序不寻常退出时，内核会生成一个core文件（是一个内存映像，同时加上调试信息）。使用<code>gdb</code>来查看core文件，可以指示出导致程序出错的代码所在文件和行数。</p>
+<p><code>kernel.core_uses_pid</code>默认为0，表示生成的core文件统一命名为core；设置为1，表示添加 pid作为扩展名，生成的core文件格式为core_xxx。可以配合<code>/proc/sys/kernel/core/core_pattern </code>修改core文件命名格式。</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://www.linuxcool.com/sysctl" target="_blank" rel="noopener noreffer">sysctl命令 – 配置内核参数</a></li>
+<li><a href="http://linuxperf.com/?p=102" target="_blank" rel="noopener noreffer">理解Linux的Memory Overcommit</a></li>
+<li><a href="https://blog.easwy.com/archives/customize-filename-of-core-dump/" target="_blank" rel="noopener noreffer">Linux使用笔记: 定制core dump文件的文件名</a></li>
+<li><a href="https://www.xtplayer.cn/linux/netfilter/linux-netfilter-optimization/" target="_blank" rel="noopener noreffer">Linux Netfilter 调优</a></li>
+<li><a href="https://arthurchiao.art/blog/conntrack-design-and-implementation-zh/" target="_blank" rel="noopener noreffer">连接跟踪（conntrack）：原理、应用及 Linux 内核实现</a></li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-04-21</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>,&nbsp;<a href="/tags/linux/">Linux</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/" class="prev" rel="prev" title="支持多架构的容器镜像构建指南"><i class="fas fa-angle-left fa-fw"></i>支持多架构的容器镜像构建指南</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.89.4">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript">window.config={"code":{"maxShownLines":25},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

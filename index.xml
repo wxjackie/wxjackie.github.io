@@ -1,11 +1,18 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>XJin&#39;s Blog</title>
+        <title>Jereo&#39;s Blog</title>
         <link>http://xjin.wang/</link>
-        <description>XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</lastBuildDate>
+        <description>Jereo&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</lastBuildDate>
             <atom:link href="http://xjin.wang/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>常用的Linux内核参数及优化场景</title>
+    <link>http://xjin.wang/posts/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0/</link>
+    <pubDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/posts/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0/</guid>
+    <description><![CDATA[根据工作中遇到的内核参数调优，阐述一些常用于调优的Linux内核参数及其使用场景。]]></description>
+</item><item>
     <title>支持多架构的容器镜像构建指南</title>
     <link>http://xjin.wang/posts/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</link>
     <pubDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</pubDate>
@@ -68,12 +75,5 @@
     <author>Author</author>
     <guid>http://xjin.wang/posts/chaosblade%E6%A8%A1%E6%8B%9F%E5%BC%82%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95/</guid>
     <description><![CDATA[使用Chaosblade模拟Redis主从异地的情况下，对由于网络原因可能产生的故障场景输出的测试报告。]]></description>
-</item><item>
-    <title>Redis的cluster-announce配置在容器化场景的应用思考</title>
-    <link>http://xjin.wang/posts/redis-cluster-announce%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%8C%96%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%80%9D%E8%80%83/</link>
-    <pubDate>Tue, 30 Mar 2021 19:53:16 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://xjin.wang/posts/redis-cluster-announce%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%8C%96%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%80%9D%E8%80%83/</guid>
-    <description><![CDATA[使用Redis的cluster-announce相关配置，帮助我们简化Redis容器化管理的应用思路。]]></description>
 </item></channel>
 </rss>

@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>云原生 - Tag - XJin&#39;s Blog</title>
+        <title>云原生 - Tag - Jereo&#39;s Blog</title>
         <link>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
-        <description>云原生 - Tag - XJin&#39;s Blog</description>
+        <description>云原生 - Tag - Jereo&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 30 Mar 2021 19:53:16 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="self" type="application/rss+xml" /><item>
     <title>Redis的cluster-announce配置在容器化场景的应用思考</title>
     <link>http://xjin.wang/posts/redis-cluster-announce%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%B9%E5%99%A8%E5%8C%96%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%80%9D%E8%80%83/</link>

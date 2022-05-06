@@ -2,12 +2,16 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>http://xjin.wang/categories/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/categories/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/tags/linux/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/categories/linux/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/posts/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/tags/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/posts/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
+            <loc>http://xjin.wang/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</loc><lastmod>2022-04-21T20:17:03&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/tags/k8s/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/categories/k8s/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/posts/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/tags/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
-            <loc>http://xjin.wang/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/tags/%E5%AE%B9%E5%99%A8/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/posts/%E6%94%AF%E6%8C%81%E5%A4%9A%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</loc><lastmod>2022-04-12T19:53:11&#43;08:00</lastmod></url><url>
             <loc>http://xjin.wang/tags/redis/</loc><lastmod>2022-03-16T10:57:03&#43;08:00</lastmod></url><url>

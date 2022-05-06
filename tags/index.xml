@@ -1,9 +1,23 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Tags - Tag - XJin&#39;s Blog</title>
+        <title>Tags - Tag - Jereo&#39;s Blog</title>
         <link>http://xjin.wang/tags/</link>
-        <description>Tags - Tag - XJin&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/" rel="self" type="application/rss+xml" /><item>
+        <description>Tags - Tag - Jereo&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>Linux</title>
+    <link>http://xjin.wang/tags/linux/</link>
+    <pubDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/tags/linux/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>性能优化</title>
+    <link>http://xjin.wang/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</link>
+    <pubDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>K8s</title>
     <link>http://xjin.wang/tags/k8s/</link>
     <pubDate>Tue, 12 Apr 2022 19:53:11 &#43;0800</pubDate>
@@ -58,20 +72,6 @@
     <pubDate>Thu, 26 Aug 2021 16:44:03 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://xjin.wang/tags/%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>测试</title>
-    <link>http://xjin.wang/tags/%E6%B5%8B%E8%AF%95/</link>
-    <pubDate>Thu, 08 Jul 2021 11:57:03 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://xjin.wang/tags/%E6%B5%8B%E8%AF%95/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>云原生</title>
-    <link>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
-    <pubDate>Tue, 30 Mar 2021 19:53:16 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://xjin.wang/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

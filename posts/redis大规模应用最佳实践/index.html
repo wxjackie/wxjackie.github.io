@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Redis大规模应用最佳实践 - XJin&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="Redis大规模应用最佳实践" />
+        <title>Redis大规模应用最佳实践 - Jereo&#39;s Blog</title><meta name="Description" content=""><meta property="og:title" content="Redis大规模应用最佳实践" />
 <meta property="og:description" content="介绍Redis在大规模应用时需要注意的事项和使用建议。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://xjin.wang/posts/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" /><meta property="og:image" content="http://xjin.wang/app-touch-icon.png"/><meta property="article:section" content="posts" />
@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5\/"
-        },"genre": "posts","keywords": "Redis, 最佳实践","wordcount":  8995 ,
+        },"genre": "posts","keywords": "Redis, 最佳实践","wordcount":  8996 ,
         "url": "http:\/\/xjin.wang\/posts\/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5\/","datePublished": "2022-03-16T10:57:03+08:00","dateModified": "2022-03-16T10:57:03+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -41,7 +41,7 @@
         <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
+            <a href="/" title="Jereo&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
@@ -54,7 +54,7 @@
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="XJin&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
+                <a href="/" title="Jereo&#39;s Blog"><span class="header-title-pre">☕</span>XJin.wang</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
@@ -77,7 +77,7 @@
             <div class="toc-content always-active" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Redis大规模应用最佳实践</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/"><i class="far fa-folder fa-fw"></i>中间件</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;8995 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;8996 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;18 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -295,7 +295,7 @@ auto-aof-rewrite-min-size 256mb
 <p>经过我们的验证，5GB内存redis fork操作耗时50ms+， 10GB内存redis fork操作耗时100ms+。所以建议单个Redis实例的内存尽量控制在8GB以下，容量问题交给水平扩展来解决。</p>
 <h3 id="关闭透明大页swap">关闭透明大页、Swap</h3>
 <p>常规的内存页是按照4 KB来分配，Linu 内核从2.6开始支持内存大页机制，该机制支持2MB大小的内存页分配，可能导致Redis时延升高和异常内存消耗。</p>
-<p>当生成RDB快照的过程中，Redis采用写时复制（CopyOnWrite）技术使得主线程依然可以接收客户端的写请求。当数据被修改的时候，Redis会复制一份这个数据，再进行修改。启用内存大页，生 RDB期间，即使客户端修改的数据只有 50B 的数据，Redis 需要复制 2MB 的大页。当写的指令比较多的时候就会导致大量的拷贝，导致性能变慢。</p>
+<p>当生成RDB快照的过程中，Redis采用写时复制（CopyOnWrite）技术使得主线程依然可以接收客户端的写请求。当数据被修改的时候，Redis会复制一份这个数据，再进行修改。启用内存大页，生成RDB期间，即使客户端修改的数据只有 50B 的数据，Redis 需要复制 2MB 的大页。当写的指令比较多的时候就会导致大量的拷贝，导致性能变慢。</p>
 <p>关闭内存大页命令：<code>echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</code></p>
 <p>Swap是操作系统里将内存数据在内存和磁盘间来回换入和换出的机制，涉及到磁盘的读写。</p>
 <blockquote>

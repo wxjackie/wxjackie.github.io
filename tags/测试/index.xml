@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>测试 - Tag - XJin&#39;s Blog</title>
+        <title>测试 - Tag - Jereo&#39;s Blog</title>
         <link>http://xjin.wang/tags/%E6%B5%8B%E8%AF%95/</link>
-        <description>测试 - Tag - XJin&#39;s Blog</description>
+        <description>测试 - Tag - Jereo&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 08 Jul 2021 11:57:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/tags/%E6%B5%8B%E8%AF%95/" rel="self" type="application/rss+xml" /><item>
     <title>使用ChaosBlade模拟Redis主从异地场景测试</title>
     <link>http://xjin.wang/posts/chaosblade%E6%A8%A1%E6%8B%9F%E5%BC%82%E5%9C%B0%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95/</link>
