@@ -27,7 +27,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/xjin.wang\/posts\/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0\/"
-        },"genre": "posts","keywords": "性能优化, Linux","wordcount":  2011 ,
+        },"genre": "posts","keywords": "性能优化, Linux","wordcount":  2559 ,
         "url": "http:\/\/xjin.wang\/posts\/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0\/","datePublished": "2022-04-21T20:17:03+08:00","dateModified": "2022-04-21T20:17:03+08:00","publisher": {
             "@type": "Organization",
             "name": "Author"},"author": {
@@ -77,8 +77,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">常用的Linux内核参数及优化场景</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>Linux</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-21">2022-04-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2011 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-21">2022-04-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2559 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -89,6 +89,11 @@
     <li><a href="#网络层面">网络层面</a>
       <ul>
         <li><a href="#netcoresomaxconn">net.core.somaxconn</a></li>
+        <li><a href="#netipv4tcp_max_tw_buckets">net.ipv4.tcp_max_tw_buckets</a></li>
+        <li><a href="#netipv4tcp_tw_recycle">net.ipv4.tcp_tw_recycle</a></li>
+        <li><a href="#netipv4tcp_tw_reuse">net.ipv4.tcp_tw_reuse</a></li>
+        <li><a href="#netipv4tcp_syncookies">net.ipv4.tcp_syncookies</a></li>
+        <li><a href="#netipv4tcp_max_syn_backlog">net.ipv4.tcp_max_syn_backlog</a></li>
         <li><a href="#netnetfilter">net.netfilter</a></li>
       </ul>
     </li>
@@ -125,6 +130,19 @@
 <h3 id="netcoresomaxconn">net.core.somaxconn</h3>
 <p><code>net.core.somaxconn</code>表示<strong>Socket的监听队列（backlog）长度上限</strong>，当一个请求尚未被处理或者建立时，它就会进入监听队列。Socket Server会从backlog中获取请求进行处理，处理后的请求不再位于backlog中，当Server处理较慢时、或者并发请求较多时，backlog被填满后，传入的新请求就会被直接拒绝。</p>
 <p>目前在Redis容器化中，我们在Redis容器中设置<code>net.core.somaxconn = 2048</code>，因为Redis的<code>tcp-backlog</code>参数必须小于该内核参数，我们要预留足够的热配置空间。</p>
+<h3 id="netipv4tcp_max_tw_buckets">net.ipv4.tcp_max_tw_buckets</h3>
+<p>设置处于<code>TIME_WAIT</code>状态的连接数最大值。服务端繁忙会导致<code>TIME_WAIT</code>大量增多，可以将此参数调小用来节省资源。</p>
+<p>该参数默认值一般为32768，对于Web服务器或代理服务器，如Nginx，建议设置为6000。</p>
+<h3 id="netipv4tcp_tw_recycle">net.ipv4.tcp_tw_recycle</h3>
+<p>设置为<code>1</code>，快速回收<code>TIME_WAIT</code>状态的连接。</p>
+<h3 id="netipv4tcp_tw_reuse">net.ipv4.tcp_tw_reuse</h3>
+<p>设置为<code>1</code>，表示复用<code>TIME_WAIT</code>的连接，即<code>TIME_WAIT</code>状态的连接重新用于新的TCP连接</p>
+<h3 id="netipv4tcp_syncookies">net.ipv4.tcp_syncookies</h3>
+<p>设置为<code>1</code>表示开启，服务端接收客户端的<code>SYNC</code>后，在向客户端发送<code>SYNC+ACK</code>之前，会要求客户端在短时间内回应一个序列号，如果客户端无回应或序列号有误则认为客户端不合法。这样可以避免<code>Sync Flood</code>攻击。</p>
+<p><code>Sync FLood</code>攻击的原理就是在TCP三次握手的开始阶段，客户端向服务端发送<code>SYNC</code>请求后直接关闭，不接收服务端发起的<code>SYNC+ACK</code>，会导致服务端多次尝试重发，大量这种半连接会导致服务端资源被严重消耗。加入序列号判断，避免了服务端的大量重试。</p>
+<h3 id="netipv4tcp_max_syn_backlog">net.ipv4.tcp_max_syn_backlog</h3>
+<p>设置系统能接受的最大半连接状态的TCP连接数。客户端向服务端发送了<code>SYNC</code>包，服务端收到后会记录，该参数决定最多能记录几个这样的连接。</p>
+<p>在受到<code>Sync Flood</code>攻击时，异常半连接会激增，导致正常业务连接无法访问，对外体现为服务端故障，受到<code>Sync Flood</code>攻击时可以视情况调大该参数。</p>
 <h3 id="netnetfilter">net.netfilter</h3>
 <p><strong>TODO</strong></p>
 <h2 id="存储层面">存储层面</h2>
