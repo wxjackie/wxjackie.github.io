@@ -3,7 +3,7 @@
         <title>All Posts - Jereo&#39;s Blog</title>
         <link>http://xjin.wang/posts/</link>
         <description>All Posts | Jereo&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 21 Apr 2022 20:17:03 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 17 Dec 2022 20:03:02 &#43;0800</lastBuildDate><atom:link href="http://xjin.wang/posts/" rel="self" type="application/rss+xml" /><item>
     <title>Redis大规模应用最佳实践</title>
     <link>http://xjin.wang/posts/redis%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%BA%94%E7%94%A8%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</link>
     <pubDate>Wed, 16 Mar 2022 10:57:03 &#43;0800</pubDate>
@@ -24,6 +24,13 @@
     <author>Author</author>
     <guid>http://xjin.wang/posts/redis%E4%BA%91%E5%8E%9F%E7%94%9F%E5%AE%9E%E8%B7%B5%E7%BB%BC%E8%BF%B0/</guid>
     <description><![CDATA[介绍网易轻舟中间件基于Operator的Redis容器化实践，阐述为何Operator是“有状态应用容器化”的一个优雅的解决方案。]]></description>
+</item><item>
+    <title>中间件云原生化实践分享</title>
+    <link>http://xjin.wang/resources/middleware-cloud-native-share.pdf</link>
+    <pubDate>Sat, 17 Dec 2022 20:03:02 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://xjin.wang/resources/middleware-cloud-native-share.pdf</guid>
+    <description><![CDATA[最近在集团内部的“懂杭课堂”平台做了一个关于“中间件云原生化实践”的直播分享，在此对PPT做个记录。]]></description>
 </item><item>
     <title>常用的Linux内核参数及优化场景</title>
     <link>http://xjin.wang/posts/%E5%86%85%E6%A0%B8%E5%8F%82%E6%95%B0/</link>
@@ -66,12 +73,5 @@
     <author>Author</author>
     <guid>http://xjin.wang/posts/cpu%E7%BC%93%E5%AD%98%E5%92%8C%E4%BC%AA%E5%85%B1%E4%BA%AB%E5%AF%B9golang%E7%9A%84%E5%BD%B1%E5%93%8D/</guid>
     <description><![CDATA[站在CPU高速缓存的角度，分析Cache伪共享在Golang执行效率上的影响。]]></description>
-</item><item>
-    <title>K8s拓扑分布约束实现Redis高可用调度的方案设计</title>
-    <link>http://xjin.wang/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</link>
-    <pubDate>Mon, 16 Aug 2021 14:40:16 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://xjin.wang/posts/pod%E6%8B%93%E6%89%91%E5%88%86%E5%B8%83%E7%BA%A6%E6%9D%9F%E8%B0%83%E5%BA%A6%E6%96%B9%E6%A1%88/</guid>
-    <description><![CDATA[一种通过K8s 1.19版本的原生特性（Pod Topology Constraints）实现中间件的高可用调度的方案，无需对K8s扩展调度器做扩展。]]></description>
 </item></channel>
 </rss>
